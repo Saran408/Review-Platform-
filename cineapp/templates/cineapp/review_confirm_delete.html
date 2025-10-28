@@ -1,0 +1,10 @@
+{% extends 'cineapp/base.html' %}
+{% block content %}
+<h2>Delete Review</h2>
+<p>Are you sure you want to delete your review for "{{ review.item.title }}"?</p>
+<form method="post">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-danger">Yes, delete</button>
+  <a href="{% url 'cineapp:item_detail' review.item.pk %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

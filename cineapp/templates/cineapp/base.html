@@ -1,0 +1,273 @@
+{% comment %} <!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CineLit+</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% load static %}
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'cineapp:home' %}">CineLit+</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="{% url 'cineapp:movies' %}">Movies</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'cineapp:series' %}">Series</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'cineapp:books' %}">Books</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'cineapp:about' %}">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'cineapp:contact' %}">Contact</a></li>
+      </ul>
+      <ul class="navbar-nav">
+        {% if user.is_authenticated %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'cineapp:profile' user.username %}">{{ user.username }}</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'cineapp:logout' %}">Logout</a></li>
+        {% else %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'cineapp:login' %}">Login</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'cineapp:signup' %}">Sign Up</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container my-4">
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+  {% block content %}{% endblock %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> {% endcomment %}
+
+
+
+
+
+
+
+
+{% comment %} <!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CineLit+</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% load static %}
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8f9fa;
+    }
+    .navbar-brand {
+      font-weight: bold;
+      color: #ffc107 !important;
+      letter-spacing: 1px;
+    }
+    .nav-link {
+      color: #f8f9fa !important;
+      transition: 0.3s;
+    }
+    .nav-link:hover {
+      color: #ffc107 !important;
+    }
+    footer {
+      background-color: #343a40;
+      color: #adb5bd;
+      text-align: center;
+      padding: 15px 0;
+      margin-top: 80px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'cineapp:home' %}">CineLit+</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="nav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="{% url 'cineapp:movies' %}">Movies</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'cineapp:series' %}">Series</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'cineapp:books' %}">Books</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'cineapp:about' %}">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'cineapp:contact' %}">Contact</a></li>
+        </ul>
+        <ul class="navbar-nav ms-auto">
+          {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'cineapp:profile' user.username %}">{{ user.username }}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'cineapp:logout' %}">Logout</a>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'cineapp:login' %}">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'cineapp:signup' %}">Sign Up</a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container my-4">
+    <!-- Messages -->
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <!-- Page-specific content -->
+    {% block content %}{% endblock %}
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-bt-1 bg-dark text-center text-light py-3">
+    <p>&copy; 2025 CineLit+. All rights reserved.</p>
+  </footer>
+
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> {% endcomment %}
+
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CineLit+</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% load static %}
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8f9fa;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .navbar-brand {
+      font-weight: bold;
+      color: #ffc107 !important;
+      letter-spacing: 1px;
+    }
+
+    .nav-link {
+      color: #f8f9fa !important;
+      transition: 0.3s;
+    }
+
+    .nav-link:hover {
+      color: #ffc107 !important;
+    }
+
+    /* Footer styles */
+    footer {
+      background-color: #343a40;
+      color: #adb5bd;
+      text-align: center;
+      padding: 15px 0;
+      margin-top: auto; /* Pushes footer to the bottom */
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'cineapp:home' %}">CineLit+</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="nav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="{% url 'cineapp:movies' %}">Movies</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'cineapp:series' %}">Series</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'cineapp:books' %}">Books</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'cineapp:about' %}">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'cineapp:contact' %}">Contact</a></li>
+        </ul>
+        <ul class="navbar-nav ms-auto">
+          {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'cineapp:profile' user.username %}">{{ user.username }}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'cineapp:logout' %}">Logout</a>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'cineapp:login' %}">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'cineapp:signup' %}">Sign Up</a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container my-4 flex-grow-1">
+    <!-- Messages -->
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <!-- Page-specific content -->
+    {% block content %}{% endblock %}
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 CineLit+. All rights reserved.</p>
+  </footer>
+
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,1946 @@
+{% extends 'cineapp/base.html' %}
+{% comment %} {% block content %}
+<div class="row">
+  <div class="col-md-4">
+    {% if item.poster %}<img src="{{ item.poster.url }}" class="img-fluid rounded">{% endif %}
+  </div>
+  <div class="col-md-8">
+    <h2>{{ item.title }}</h2>
+    <p class="text-muted">{{ item.category }} • {{ item.release_year }}</p>
+    <p>⭐ {{ item.average_rating }} ({{ item.reviews_count }} reviews)</p>
+    <p>{{ item.description }}</p>
+
+    {% if user.is_authenticated and user == item.created_by %}
+      <a href="{% url 'cineapp:edit_item' item.pk %}" class="btn btn-outline-secondary btn-sm">Edit Item</a>
+      <a href="{% url 'cineapp:delete_item' item.pk %}" class="btn btn-outline-danger btn-sm">Delete Item</a>
+    {% endif %}
+  </div>
+</div>
+
+<hr>
+<h4>Reviews</h4>
+{% for review in item.reviews.all %}
+  <div class="card mb-2">
+    <div class="card-body">
+      <strong>{{ review.user.username }}</strong> • <small class="text-muted">{{ review.created_at }}</small>
+      <p class="mb-1">Rating: {{ review.rating }} / 5</p>
+      <p>{{ review.comment }}</p>
+      {% if user.is_authenticated and user == review.user %}
+        <a href="{% url 'cineapp:edit_review' review.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+        <a href="{% url 'cineapp:delete_review' review.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+      {% endif %}
+    </div>
+  </div>
+{% empty %}
+  <p>No reviews yet.</p>
+{% endfor %}
+
+{% if user.is_authenticated %}
+  <hr>
+  <h5>Add a review</h5>
+  <form action="{% url 'cineapp:add_review' item.pk %}" method="post">
+    {% csrf_token %}
+    {{ review_form.as_p }}
+    <button class="btn btn-primary">Submit Review</button>
+  </form>
+{% else %}
+  <p><a href="{% url 'login' %}">Log in</a> to leave a review.</p>
+{% endif %}
+{% endblock %} {% endcomment %}
+
+
+
+{% comment %} {% block content %}
+<div class="row mb-4">
+  <div class="col-md-4">
+    {% if item.poster %}
+      <img src="{{ item.poster.url }}" class="img-fluid rounded shadow-sm" alt="{{ item.title }}">
+    {% endif %}
+  </div>
+  <div class="col-md-8">
+    <h2>{{ item.title }}</h2>
+    <p class="text-muted">{{ item.category }} • {{ item.release_year }}</p>
+    <p>⭐ {{ item.average_rating }} ({{ item.reviews_count }} reviews)</p>
+    <p>{{ item.description }}</p>
+
+    {% if user.is_authenticated and user == item.created_by %}
+      <a href="{% url 'cineapp:edit_item' item.pk %}" class="btn btn-outline-secondary btn-sm me-2">Edit Item</a>
+      <a href="{% url 'cineapp:delete_item' item.pk %}" class="btn btn-outline-danger btn-sm">Delete Item</a>
+    {% endif %}
+  </div>
+</div>
+
+<hr>
+
+<h4 class="mb-3">Reviews</h4>
+{% if item.reviews.all %}
+  {% for review in item.reviews.all %}
+    <div class="card mb-3 shadow-sm">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <strong>{{ review.user.username }}</strong>
+          <small class="text-muted">{{ review.created_at }}</small>
+        </div>
+        <p class="mb-1">⭐ {{ review.rating }} / 5</p>
+        <p>{{ review.comment }}</p>
+        {% if user.is_authenticated and user == review.user %}
+          <div class="d-flex gap-2">
+            <a href="{% url 'cineapp:edit_review' review.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+            <a href="{% url 'cineapp:delete_review' review.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+{% else %}
+  <p class="text-muted">No reviews yet. Be the first to add one!</p>
+{% endif %}
+
+{% if user.is_authenticated %}
+  <hr>
+  <h5 class="mb-3">Add a Review</h5>
+  <div class="card shadow-sm mb-4 p-3" style="background-color:#f8f9fa;">
+    <form action="{% url 'cineapp:add_review' item.pk %}" method="post">
+      {% csrf_token %}
+      {% for field in review_form %}
+        <div class="mb-3">
+          {{ field.label_tag }}
+          {{ field }}
+          {% for error in field.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+      <button type="submit" class="btn btn-warning">Submit Review</button>
+    </form>
+  </div>
+{% else %}
+  <p><a href="{% url 'login' %}" class="text-decoration-none">Log in</a> to leave a review.</p>
+{% endif %}
+
+<style>
+  input, select, textarea {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #ccc !important;
+    border-radius: 5px;
+    padding: 8px;
+    width: 100%;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: #ffc107 !important;
+    box-shadow: 0 0 5px #ffc107;
+    outline: none;
+  }
+
+  .btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #1a1a1a;
+    font-weight: bold;
+  }
+
+  .btn-warning:hover {
+    background-color: #e0ac00;
+    border-color: #e0ac00;
+  }
+
+  .card-body p {
+    margin-bottom: 0.5rem;
+  }
+</style>
+{% endblock %} {% endcomment %}
+
+
+{% comment %} {% block content %}
+<div class="row mb-4">
+  <div class="col-md-4">
+    {% if item.poster %}
+      <img src="{{ item.poster.url }}" class="img-fluid rounded shadow-sm" alt="{{ item.title }}">
+    {% endif %}
+  </div>
+
+  <div class="col-md-8">
+    <h2>{{ item.title }}</h2>
+    <p class="text-muted">{{ item.category }} • {{ item.release_year }}</p>
+
+    <!-- Genres -->
+    {% if item.genres %}
+      <p><strong>Genres:</strong> {{ item.genres|join:", " }}</p>
+    {% endif %}
+
+    <!-- Streaming Link -->
+    {% if item.streaming_link %}
+      <p><strong>Streaming Link:</strong> 
+        <a href="{{ item.streaming_link }}" target="_blank">{{ item.streaming_link }}</a>
+      </p>
+    {% endif %}
+
+    <p>⭐ {{ item.average_rating }} ({{ item.reviews_count }} reviews)</p>
+    <p>{{ item.description }}</p>
+
+    {% if user.is_authenticated and user == item.created_by %}
+      <a href="{% url 'cineapp:edit_item' item.pk %}" class="btn btn-outline-secondary btn-sm me-2">Edit Item</a>
+      <a href="{% url 'cineapp:delete_item' item.pk %}" class="btn btn-outline-danger btn-sm">Delete Item</a>
+    {% endif %}
+  </div>
+</div>
+
+<hr>
+
+<h4 class="mb-3">Reviews</h4>
+{% if item.reviews.all %}
+  {% for review in item.reviews.all %}
+    <div class="card mb-3 shadow-sm">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <strong>{{ review.user.username }}</strong>
+          <small class="text-muted">{{ review.created_at }}</small>
+        </div>
+        <p class="mb-1">⭐ {{ review.rating }} / 5</p>
+        <p>{{ review.comment }}</p>
+        {% if user.is_authenticated and user == review.user %}
+          <div class="d-flex gap-2">
+            <a href="{% url 'cineapp:edit_review' review.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+            <a href="{% url 'cineapp:delete_review' review.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+{% else %}
+  <p class="text-muted">No reviews yet. Be the first to add one!</p>
+{% endif %}
+
+{% if user.is_authenticated %}
+  <hr>
+  <h5 class="mb-3">Add a Review</h5>
+  <div class="card shadow-sm mb-4 p-3" style="background-color:#f8f9fa;">
+    <form action="{% url 'cineapp:add_review' item.pk %}" method="post">
+      {% csrf_token %}
+      {% for field in review_form %}
+        <div class="mb-3">
+          {{ field.label_tag }}
+          {{ field }}
+          {% for error in field.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+      <button type="submit" class="btn btn-warning">Submit Review</button>
+    </form>
+  </div>
+{% else %}
+  <p><a href="{% url 'login' %}" class="text-decoration-none">Log in</a> to leave a review.</p>
+{% endif %}
+
+<style>
+  input, select, textarea {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #ccc !important;
+    border-radius: 5px;
+    padding: 8px;
+    width: 100%;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: #ffc107 !important;
+    box-shadow: 0 0 5px #ffc107;
+    outline: none;
+  }
+
+  .btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #1a1a1a;
+    font-weight: bold;
+  }
+
+  .btn-warning:hover {
+    background-color: #e0ac00;
+    border-color: #e0ac00;
+  }
+
+  .card-body p {
+    margin-bottom: 0.5rem;
+  }
+</style>
+{% endblock %} {% endcomment %}
+
+
+
+{% comment %} {% block content %}
+<div class="row mb-4">
+  <div class="col-md-4">
+    {% if item.poster %}
+      <img src="{{ item.poster.url }}" class="img-fluid rounded shadow-sm" alt="{{ item.title }}">
+    {% endif %}
+  </div>
+
+  <div class="col-md-8">
+    <h2>{{ item.title }}</h2>
+    <p class="text-muted">{{ item.category }} • {{ item.release_year }}</p>
+
+    <!-- Genres -->
+    {% if item.genres %}
+      <p><strong>Genres:</strong> {{ item.genres|join:", " }}</p>
+    {% endif %}
+
+    <!-- Streaming Link / YouTube Embed -->
+    {% if video_id %}
+      <div class="mb-3">
+        <h5>Watch Video</h5>
+        <div class="ratio ratio-16x9">
+          <iframe 
+            src="https://www.youtube.com/embed/{{ video_id }}" 
+            title="YouTube video" 
+            allowfullscreen
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+          </iframe>
+        </div>
+      </div>
+    {% elif item.streaming_link %}
+      <p><strong>Streaming Link:</strong> 
+        <a href="{{ item.streaming_link }}" target="_blank">{{ item.streaming_link }}</a>
+      </p>
+    {% endif %}
+
+    <p>⭐ {{ item.average_rating }} ({{ item.reviews_count }} reviews)</p>
+    <p>{{ item.description }}</p>
+
+    {% if user.is_authenticated and user == item.created_by %}
+      <a href="{% url 'cineapp:edit_item' item.pk %}" class="btn btn-outline-secondary btn-sm me-2">Edit Item</a>
+      <a href="{% url 'cineapp:delete_item' item.pk %}" class="btn btn-outline-danger btn-sm">Delete Item</a>
+    {% endif %}
+  </div>
+</div>
+
+<hr>
+
+<h4 class="mb-3">Reviews</h4>
+{% if item.reviews.all %}
+  {% for review in item.reviews.all %}
+    <div class="card mb-3 shadow-sm">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <strong>{{ review.user.username }}</strong>
+          <small class="text-muted">{{ review.created_at }}</small>
+        </div>
+        <p class="mb-1">⭐ {{ review.rating }} / 5</p>
+        <p>{{ review.comment }}</p>
+        {% if user.is_authenticated and user == review.user %}
+          <div class="d-flex gap-2">
+            <a href="{% url 'cineapp:edit_review' review.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+            <a href="{% url 'cineapp:delete_review' review.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+{% else %}
+  <p class="text-muted">No reviews yet. Be the first to add one!</p>
+{% endif %}
+
+{% if user.is_authenticated %}
+  <hr>
+  <h5 class="mb-3">Add a Review</h5>
+  <div class="card shadow-sm mb-4 p-3" style="background-color:#f8f9fa;">
+    <form action="{% url 'cineapp:add_review' item.pk %}" method="post">
+      {% csrf_token %}
+      {% for field in review_form %}
+        <div class="mb-3">
+          {{ field.label_tag }}
+          {{ field }}
+          {% for error in field.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+      <button type="submit" class="btn btn-warning">Submit Review</button>
+    </form>
+  </div>
+{% else %}
+  <p><a href="{% url 'login' %}" class="text-decoration-none">Log in</a> to leave a review.</p>
+{% endif %}
+
+<style>
+  input, select, textarea {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #ccc !important;
+    border-radius: 5px;
+    padding: 8px;
+    width: 100%;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: #ffc107 !important;
+    box-shadow: 0 0 5px #ffc107;
+    outline: none;
+  }
+
+  .btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #1a1a1a;
+    font-weight: bold;
+  }
+
+  .btn-warning:hover {
+    background-color: #e0ac00;
+    border-color: #e0ac00;
+  }
+
+  .card-body p {
+    margin-bottom: 0.5rem;
+  }
+
+  .ratio {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%;
+  }
+
+  .ratio iframe {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+</style>
+{% endblock %} {% endcomment %}
+
+
+
+{% comment %} {% block content %}
+<div class="row mb-4">
+  <!-- Poster -->
+  <div class="col-md-4">
+    {% if item.poster %}
+      <img src="{{ item.poster.url }}" class="img-fluid rounded shadow-sm" alt="{{ item.title }}">
+    {% endif %}
+  </div>
+
+  <!-- Details -->
+  <div class="col-md-8">
+    <h2>{{ item.title }}</h2>
+    <p class="text-muted">{{ item.category }} • {{ item.release_year }}</p>
+
+    <!-- Genres -->
+    {% if item.genres %}
+      <p><strong>Genres:</strong> {{ item.genres|join:", " }}</p>
+    {% endif %}
+
+    <!-- Streaming Link -->
+    {% if item.streaming_link %}
+      <p><strong>Streaming Link:</strong> 
+        <a href="{{ item.streaming_link }}" target="_blank">{{ item.streaming_link }}</a>
+      </p>
+    {% endif %}
+
+    <p>⭐ {{ item.average_rating }} ({{ item.reviews_count }} reviews)</p>
+    <p>{{ item.description }}</p>
+
+    {% if user.is_authenticated and user == item.created_by %}
+      <a href="{% url 'cineapp:edit_item' item.pk %}" class="btn btn-outline-secondary btn-sm me-2">Edit Item</a>
+      <a href="{% url 'cineapp:delete_item' item.pk %}" class="btn btn-outline-danger btn-sm">Delete Item</a>
+    {% endif %}
+  </div>
+</div>
+
+<!-- YouTube Video -->
+{% if item.youtube_link %}
+  <div class="d-flex justify-content-center mb-4">
+    
+    <iframe width="50%" height="400" 
+            src="https://www.youtube.com/embed/{{ item.youtube_link|cut:'https://youtu.be/'|cut:'https://www.youtube.com/watch?v=' }}" 
+            title="{{ item.title }}" frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+    </iframe>
+  </div>
+{% endif %}
+
+<hr>
+
+<h4 class="mb-3">Reviews</h4>
+{% if item.reviews.all %}
+  {% for review in item.reviews.all %}
+    <div class="card mb-3 shadow-sm">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <strong>{{ review.user.username }}</strong>
+          <small class="text-muted">{{ review.created_at }}</small>
+        </div>
+        <p class="mb-1">⭐ {{ review.rating }} / 5</p>
+        <p>{{ review.comment }}</p>
+        {% if user.is_authenticated and user == review.user %}
+          <div class="d-flex gap-2">
+            <a href="{% url 'cineapp:edit_review' review.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+            <a href="{% url 'cineapp:delete_review' review.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+{% else %}
+  <p class="text-muted">No reviews yet. Be the first to add one!</p>
+{% endif %}
+
+{% if user.is_authenticated %}
+  <hr>
+  <h5 class="mb-3">Add a Review</h5>
+  <div class="card shadow-sm mb-4 p-3" style="background-color:#f8f9fa;">
+    <form action="{% url 'cineapp:add_review' item.pk %}" method="post">
+      {% csrf_token %}
+      {% for field in review_form %}
+        <div class="mb-3">
+          {{ field.label_tag }}
+          {{ field }}
+          {% for error in field.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+      <button type="submit" class="btn btn-warning">Submit Review</button>
+    </form>
+  </div>
+{% else %}
+  <p><a href="{% url 'login' %}" class="text-decoration-none">Log in</a> to leave a review.</p>
+{% endif %}
+
+<style>
+  input, select, textarea {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #ccc !important;
+    border-radius: 5px;
+    padding: 8px;
+    width: 100%;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: #ffc107 !important;
+    box-shadow: 0 0 5px #ffc107;
+    outline: none;
+  }
+
+  .btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #1a1a1a;
+    font-weight: bold;
+  }
+
+  .btn-warning:hover {
+    background-color: #e0ac00;
+    border-color: #e0ac00;
+  }
+
+  .card-body p {
+    margin-bottom: 0.5rem;
+  }
+</style>
+{% endblock %} {% endcomment %}
+
+{% comment %} 
+{% block content %}
+<div class="row mb-4">
+  <!-- Poster -->
+  <div class="col-md-4">
+    {% if item.poster %}
+      <img src="{{ item.poster.url }}" class="img-fluid rounded shadow-sm" alt="{{ item.title }}">
+    {% endif %}
+  </div>
+
+  <!-- Item Info -->
+  <div class="col-md-8">
+    <h2>{{ item.title }}</h2>
+    <p class="text-muted">{{ item.category }} • {{ item.release_year }}</p>
+
+    <!-- Genres -->
+    {% if item.genres %}
+      <p><strong>Genres:</strong> {{ item.genres|join:", " }}</p>
+    {% endif %}
+
+    <!-- Streaming Link -->
+    {% if item.streaming_link %}
+      <p><strong>Streaming Link:</strong> 
+        <a href="{{ item.streaming_link }}" target="_blank">{{ item.streaming_link }}</a>
+      </p>
+    {% endif %}
+
+    <!-- Theatrical Experience -->
+    {% if item.theatrical_experience %}
+      <p><strong>Theatrical Experience:</strong> {{ item.theatrical_experience }}</p>
+    {% endif %}
+
+    <p>⭐ {{ item.average_rating }} ({{ item.reviews_count }} reviews)</p>
+    <p>{{ item.description }}</p>
+
+    {% if user.is_authenticated and user == item.created_by %}
+      <a href="{% url 'cineapp:edit_item' item.pk %}" class="btn btn-outline-secondary btn-sm me-2">Edit Item</a>
+      <a href="{% url 'cineapp:delete_item' item.pk %}" class="btn btn-outline-danger btn-sm">Delete Item</a>
+    {% endif %}
+  </div>
+</div>
+
+<!-- YouTube Video -->
+{% if item.youtube_link %}
+  <div class="text-center mb-4">
+    <iframe width="60%" height="400" 
+            src="https://www.youtube.com/embed/{{ item.youtube_link|cut:'https://youtu.be/'|cut:'https://www.youtube.com/watch?v=' }}" 
+            title="{{ item.title }}" frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+    </iframe>
+  </div>
+{% endif %}
+
+<hr>
+
+<h4 class="mb-3">Reviews</h4>
+{% if item.reviews.all %}
+  {% for review in item.reviews.all %}
+    <div class="card mb-3 shadow-sm">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <strong>{{ review.user.username }}</strong>
+          <small class="text-muted">{{ review.created_at }}</small>
+        </div>
+        <p class="mb-1">⭐ {{ review.rating }} / 5</p>
+        <p>{{ review.comment }}</p>
+        {% if user.is_authenticated and user == review.user %}
+          <div class="d-flex gap-2">
+            <a href="{% url 'cineapp:edit_review' review.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+            <a href="{% url 'cineapp:delete_review' review.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+{% else %}
+  <p class="text-muted">No reviews yet. Be the first to add one!</p>
+{% endif %}
+
+{% if user.is_authenticated %}
+  <hr>
+  <h5 class="mb-3">Add a Review</h5>
+  <div class="card shadow-sm mb-4 p-3" style="background-color:#f8f9fa;">
+    <form action="{% url 'cineapp:add_review' item.pk %}" method="post">
+      {% csrf_token %}
+      {% for field in review_form %}
+        <div class="mb-3">
+          {{ field.label_tag }}
+          {{ field }}
+          {% for error in field.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+      <button type="submit" class="btn btn-warning">Submit Review</button>
+    </form>
+  </div>
+{% else %}
+  <p><a href="{% url 'login' %}" class="text-decoration-none">Log in</a> to leave a review.</p>
+{% endif %}
+
+<style>
+  input, select, textarea {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #ccc !important;
+    border-radius: 5px;
+    padding: 8px;
+    width: 100%;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: #ffc107 !important;
+    box-shadow: 0 0 5px #ffc107;
+    outline: none;
+  }
+
+  .btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #1a1a1a;
+    font-weight: bold;
+  }
+
+  .btn-warning:hover {
+    background-color: #e0ac00;
+    border-color: #e0ac00;
+  }
+
+  .card-body p {
+    margin-bottom: 0.5rem;
+  }
+
+  .text-center iframe {
+    max-width: 100%;
+  }
+</style>
+{% endblock %} {% endcomment %}
+
+
+
+
+{% comment %} {% block content %}
+<div class="row mb-4">
+  <!-- Poster -->
+  <div class="col-md-4">
+    {% if item.poster %}
+      <img src="{{ item.poster.url }}" class="img-fluid rounded shadow-sm" alt="{{ item.title }}">
+    {% endif %}
+  </div>
+
+  <!-- Item Info -->
+  <div class="col-md-8">
+    <div class="d-flex justify-content-between align-items-start">
+      <div>
+        <h2>{{ item.title }}</h2>
+        <p class="text-muted">{{ item.category }} • {{ item.release_year }}</p>
+      </div>
+
+      <!-- Favorite Button -->
+      {% if user.is_authenticated %}
+        <form action="{% url 'cineapp:toggle_favorite' item.id %}" method="post">
+          {% csrf_token %}
+          {% if is_favorited %}
+            <button type="submit" class="btn btn-outline-danger btn-sm">
+              💔 Remove Favorite
+            </button>
+          {% else %}
+            <button type="submit" class="btn btn-outline-success btn-sm">
+              ❤️ Add to Favorites
+            </button>
+          {% endif %}
+        </form>
+      {% endif %}
+    </div>
+
+    <!-- Genres -->
+    {% if item.genres %}
+      <p><strong>Genres:</strong> {{ item.genres|join:", " }}</p>
+    {% endif %}
+
+    <!-- Streaming Link -->
+    {% if item.streaming_link %}
+      <p><strong>Streaming Link:</strong> 
+        <a href="{{ item.streaming_link }}" target="_blank">{{ item.streaming_link }}</a>
+      </p>
+    {% endif %}
+
+    <!-- Theatrical Experience -->
+    {% if item.theatrical_experience %}
+      <p><strong>Theatrical Experience:</strong> {{ item.theatrical_experience }}</p>
+    {% endif %}
+
+    <p>⭐ {{ item.average_rating }} ({{ item.reviews_count }} reviews)</p>
+    <p>{{ item.description }}</p>
+
+    {% if user.is_authenticated and user == item.created_by %}
+      <a href="{% url 'cineapp:edit_item' item.pk %}" class="btn btn-outline-secondary btn-sm me-2">Edit Item</a>
+      <a href="{% url 'cineapp:delete_item' item.pk %}" class="btn btn-outline-danger btn-sm">Delete Item</a>
+    {% endif %}
+  </div>
+</div>
+
+<!-- YouTube Video -->
+{% if video_id %}
+  <div class="text-center mb-4">
+    <iframe width="60%" height="400"
+            src="https://www.youtube.com/embed/{{ video_id }}"
+            title="{{ item.title }}" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+    </iframe>
+  </div>
+{% endif %}
+
+<hr>
+
+<h4 class="mb-3">Reviews</h4>
+{% if item.reviews.all %}
+  {% for review in item.reviews.all %}
+    <div class="card mb-3 shadow-sm">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <strong>{{ review.user.username }}</strong>
+          <small class="text-muted">{{ review.created_at }}</small>
+        </div>
+        <p class="mb-1">⭐ {{ review.rating }} / 5</p>
+        <p>{{ review.comment }}</p>
+        {% if user.is_authenticated and user == review.user %}
+          <div class="d-flex gap-2">
+            <a href="{% url 'cineapp:edit_review' review.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+            <a href="{% url 'cineapp:delete_review' review.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+{% else %}
+  <p class="text-muted">No reviews yet. Be the first to add one!</p>
+{% endif %}
+
+{% if user.is_authenticated %}
+  <hr>
+  <h5 class="mb-3">Add a Review</h5>
+  <div class="card shadow-sm mb-4 p-3" style="background-color:#f8f9fa;">
+    <form action="{% url 'cineapp:add_review' item.pk %}" method="post">
+      {% csrf_token %}
+      {% for field in review_form %}
+        <div class="mb-3">
+          {{ field.label_tag }}
+          {{ field }}
+          {% for error in field.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+      <button type="submit" class="btn btn-warning">Submit Review</button>
+    </form>
+  </div>
+{% else %}
+  <p><a href="{% url 'login' %}" class="text-decoration-none">Log in</a> to leave a review.</p>
+{% endif %}
+
+<style>
+  input, select, textarea {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #ccc !important;
+    border-radius: 5px;
+    padding: 8px;
+    width: 100%;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: #ffc107 !important;
+    box-shadow: 0 0 5px #ffc107;
+    outline: none;
+  }
+
+  .btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #1a1a1a;
+    font-weight: bold;
+  }
+
+  .btn-warning:hover {
+    background-color: #e0ac00;
+    border-color: #e0ac00;
+  }
+
+  .card-body p {
+    margin-bottom: 0.5rem;
+  }
+
+  .text-center iframe {
+    max-width: 100%;
+  }
+</style>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} {% block content %}
+<div class="container py-5">
+
+  <!-- Item Header Card -->
+  <div class="card shadow-lg border-0 rounded-4 mb-5 p-3" 
+       style="background: rgba(255,255,255,0.05); backdrop-filter: blur(12px);">
+    <div class="row g-0 align-items-center">
+      <!-- Poster -->
+      <div class="col-md-4 text-center p-3">
+        {% if item.poster %}
+          <img src="{{ item.poster.url }}" class="img-fluid rounded-4 shadow" alt="{{ item.title }}">
+        {% else %}
+          <div class="text-muted fst-italic mt-5">No poster available</div>
+        {% endif %}
+      </div>
+
+      <!-- Info Section -->
+      <div class="col-md-8 p-4">
+        <div class="d-flex justify-content-between align-items-start flex-wrap">
+          <div>
+            <h2 class="fw-bold mb-1 text-light">{{ item.title }}</h2>
+            <p class="text-white">{{ item.category }} • {{ item.release_year }}</p>
+          </div>
+
+          <!-- Favorite Button -->
+          {% if user.is_authenticated %}
+            <form action="{% url 'cineapp:toggle_favorite' item.id %}" method="post">
+              {% csrf_token %}
+              {% if is_favorited %}
+                <button type="submit" class="btn btn-outline-danger btn-sm fw-bold rounded-pill px-3 py-1">
+                  💔 Remove
+                </button>
+              {% else %}
+                <button type="submit" class="btn btn-outline-success btn-sm fw-bold rounded-pill px-3 py-1">
+                  ❤️ Favorite
+                </button>
+              {% endif %}
+            </form>
+          {% endif %}
+        </div>
+
+        <!-- Genres -->
+        {% if item.genres %}
+          <div class="mt-3 mb-2">
+            {% for genre in item.genres %}
+              <span class="badge bg-warning text-dark me-1 mb-1 px-3 py-2 rounded-pill shadow-sm">{{ genre }}</span>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <!-- Theatrical Experience -->
+        {% if item.theatrical_experience %}
+          <p class="mt-3 mb-1 text-light"><strong>Theatrical Experience:</strong> {{ item.theatrical_experience }}</p>
+        {% endif %}
+
+        <p class="mt-2 text-warning fw-semibold">⭐ {{ item.average_rating }} ({{ item.reviews_count }} reviews)</p>
+        <p class="mt-3 text-light">{{ item.description }}</p>
+
+        <!-- Streaming Link -->
+        {% if item.streaming_link %}
+          <p><strong style="color:white;">Watch on:</strong> 
+            <a href="{{ item.streaming_link }}" class="text-info text-decoration-none" target="_blank">{{ item.streaming_link }}</a>
+          </p>
+        {% endif %}
+
+        <!-- Edit/Delete (Owner Only) -->
+        {% if user.is_authenticated and user == item.created_by %}
+          <div class="mt-3">
+            <a href="{% url 'cineapp:edit_item' item.pk %}" class="btn btn-outline-secondary btn-sm me-2">Edit</a>
+            <a href="{% url 'cineapp:delete_item' item.pk %}" class="btn btn-outline-danger btn-sm">Delete</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- YouTube Video -->
+  {% if video_id %}
+    <div class="text-center mb-5">
+      <div class="ratio ratio-16x9 rounded-4 shadow-lg overflow-hidden">
+        <iframe src="https://www.youtube.com/embed/{{ video_id }}"
+                title="{{ item.title }}" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
+      </div>
+    </div>
+  {% endif %}
+
+  <hr class="text-secondary my-4">
+
+  <!-- Reviews -->
+  <div class="reviews-section mb-5">
+    <h4 class="fw-bold mb-3 text-warning">User Reviews</h4>
+    {% if item.reviews.all %}
+      {% for review in item.reviews.all %}
+        <div class="card mb-3 shadow-sm border-0 rounded-3" style="background: rgba(255,255,255,0.05);">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <strong class="text-light">{{ review.user.username }}</strong>
+              <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+            </div>
+            <p class="text-warning mb-1">⭐ {{ review.rating }}/5</p>
+            <p class="text-light">{{ review.comment }}</p>
+
+            {% if user.is_authenticated and user == review.user %}
+              <div class="d-flex gap-2 mt-2">
+                <a href="{% url 'cineapp:edit_review' review.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                <a href="{% url 'cineapp:delete_review' review.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="text-muted fst-italic">No reviews yet — be the first to share your thoughts!</p>
+    {% endif %}
+  </div>
+
+  <!-- Add Review -->
+  {% if user.is_authenticated %}
+    <div class="card shadow-sm border-0 rounded-3 p-4 mb-5" style="background: rgba(255,255,255,0.05);">
+      <h5 class="fw-bold text-warning mb-3">Add Your Review</h5>
+      <form action="{% url 'cineapp:add_review' item.pk %}" method="post">
+        {% csrf_token %}
+        {% for field in review_form %}
+          <div class="mb-3">
+            {{ field.label_tag }}
+            {{ field }}
+            {% for error in field.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-warning fw-bold">Submit Review</button>
+      </form>
+    </div>
+  {% else %}
+    <p class="text-center text-light">
+      <a href="{% url 'login' %}" class="text-warning text-decoration-none fw-bold">Log in</a> to leave a review.
+    </p>
+  {% endif %}
+</div>
+
+<!-- Styles -->
+<style>
+  html, body {
+    height: 100%;
+    background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+    color: #f8f9fa;
+  }
+  .card {
+    background-color: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+  }
+  input, select, textarea {
+    background-color: #ffffff !important;
+    color: #000 !important;
+    border: 1px solid #ccc !important;
+    border-radius: 6px;
+    padding: 8px;
+    width: 100%;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: #ffc107 !important;
+    box-shadow: 0 0 5px #ffc107;
+    outline: none;
+  }
+  .btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #1a1a1a;
+  }
+  .btn-warning:hover {
+    background-color: #e0ac00;
+  }
+  .badge {
+    font-weight: 600;
+  }
+</style>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+
+{% comment %} {% block content %}
+<div class="container py-5">
+
+  <!-- Item Header Card -->
+  <div class="card shadow-lg border-4 rounded-4 mb-5 p-3" 
+       style="background: #e0e2e4a3;">
+    <div class="row g-0 align-items-center">
+      <!-- Poster -->
+      <div class="col-md-4 text-center p-3">
+        {% if item.poster %}
+          <img src="{{ item.poster.url }}" class="img-fluid rounded-4 shadow" alt="{{ item.title }}">
+        {% else %}
+          <div class="text-muted fst-italic mt-5">No poster available</div>
+        {% endif %}
+      </div>
+
+      <!-- Info Section -->
+      <div class="col-md-8 p-4">
+        <div class="d-flex justify-content-between align-items-start flex-wrap">
+          <div>
+            <h2 class="fw-bold mb-1 text-dark">{{ item.title }}</h2>
+            <p class="text-muted">{{ item.category }} • {{ item.release_year }}</p>
+          </div>
+
+          <!-- Favorite Button -->
+          {% if user.is_authenticated %}
+            <form action="{% url 'cineapp:toggle_favorite' item.id %}" method="post">
+              {% csrf_token %}
+              {% if is_favorited %}
+                <button type="submit" class="btn btn-outline-danger btn-sm fw-bold rounded-pill px-3 py-1">
+                  💔 Remove
+                </button>
+              {% else %}
+                <button type="submit" class="btn btn-outline-success btn-sm fw-bold rounded-pill px-3 py-1">
+                  ❤️ Favorite
+                </button>
+              {% endif %}
+            </form>
+          {% endif %}
+        </div>
+
+        <!-- Genres -->
+        {% if item.genres %}
+          <div class="mt-3 mb-2">
+            {% for genre in item.genres %}
+              <span class="badge bg-dark text-white me-1 mb-1 px-3 py-2 rounded-pill shadow-sm">{{ genre }}</span>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <!-- Theatrical Experience -->
+        {% if item.theatrical_experience %}
+          <p class="mt-3 mb-1 text-dark"><strong>Theatrical Experience:</strong> {{ item.theatrical_experience }}</p>
+        {% endif %}
+
+        <p class="mt-2 text-green fw-semibold">⭐ {{ item.average_rating }} ({{ item.reviews_count }} reviews)</p>
+        <p class="mt-3 text-dark">{{ item.description }}</p>
+
+        <!-- Streaming Link -->
+        {% if item.streaming_link %}
+          <p><strong style="color:black;">Watch on:</strong> 
+            <a href="{{ item.streaming_link }}" class="text-primary text-decoration-none" target="_blank">{{ item.streaming_link }}</a>
+          </p>
+        {% endif %}
+        <div class="mt-4">
+        <div class="d-flex align-items-center gap-3">
+          <strong>Share this:</strong>
+          <a href="https://api.whatsapp.com/send?text=Check this out: {{ request.build_absolute_uri }}" target="_blank">WhatsApp</a>
+          <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text=Check this out!" target="_blank">X (Twitter)</a>
+          <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank">Facebook</a>
+        </div>
+</div>
+
+        <!-- Edit/Delete (Owner Only) -->
+        {% if user.is_authenticated and user == item.created_by %}
+          <div class="mt-3">
+            <a href="{% url 'cineapp:edit_item' item.pk %}" class="btn btn-outline-secondary btn-sm me-2">Edit</a>
+            <a href="{% url 'cineapp:delete_item' item.pk %}" class="btn btn-outline-danger btn-sm">Delete</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- YouTube Video -->
+  {% if video_id %}
+    <div class="text-center mb-5">
+      <div class="ratio ratio-16x9 rounded-4 shadow-lg overflow-hidden">
+        <iframe src="https://www.youtube.com/embed/{{ video_id }}"
+                title="{{ item.title }}" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
+      </div>
+    </div>
+  {% endif %}
+
+  <hr class="text-secondary my-4">
+
+  <!-- Reviews -->
+  <div class="reviews-section mb-5">
+    <h4 class="fw-bold mb-3 text-dark">User Reviews</h4>
+    {% if item.reviews.all %}
+      {% for review in item.reviews.all %}
+        <div class="card mb-3 shadow-sm border-0 rounded-3" style="background: #e9eef2ff;">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <strong class="text-dark">{{ review.user.username }}</strong>
+              <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+            </div>
+            <p class="text-danger mb-1">⭐ {{ review.rating }}/5</p>
+            <p class="text-dark">{{ review.comment }}</p>
+
+            {% if user.is_authenticated and user == review.user %}
+              <div class="d-flex gap-2 mt-2">
+                <a href="{% url 'cineapp:edit_review' review.pk %}" class="btn btn-sm btn-outline-dark">Edit</a>
+                <a href="{% url 'cineapp:delete_review' review.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="text-muted fst-italic">No reviews yet — be the first to share your thoughts!</p>
+    {% endif %}
+  </div>
+
+  <!-- Add Review -->
+  {% if user.is_authenticated %}
+    <div class="card shadow-sm border-1 rounded-3 p-4 mb-5" style="background: #f8f9fa;">
+      <h5 class="fw-bold text-dark mb-3">Add Your Review</h5>
+      <form action="{% url 'cineapp:add_review' item.pk %}" method="post">
+        {% csrf_token %}
+        {% for field in review_form %}
+          <div class="mb-3">
+            {{ field.label_tag }}
+            {{ field }}
+            {% for error in field.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-dark fw-bold">Submit Review</button>
+      </form>
+    </div>
+  {% else %}
+    <p class="text-center text-dark">
+      <a href="{% url 'login' %}" class="text-primary text-decoration-none fw-bold">Log in</a> to leave a review.
+    </p>
+  {% endif %}
+
+    <!-- Similar Items -->
+  {% if similar_items %}
+    <hr class="my-4">
+    <h4 class="text-dark mb-3">Similar {{ item.category }}s</h4>
+    <div class="row">
+      {% for s in similar_items %}
+        <div class="col-md-3 mb-3">
+          <div class="card shadow-sm">
+            {% if s.poster %}
+              <img src="{{ s.poster.url }}" class="card-img-top" alt="{{ s.title }}">
+            {% endif %}
+            <div class="card-body text-center">
+              <h6 class="text-dark">{{ s.title }}</h6>
+              <a href="{% url 'cineapp:item_detail' s.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
+<!-- Styles -->
+<style>
+  html, body {
+    height: 100%;
+    background: #ffffff;
+    color: #000;
+  }
+  .card {
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+  }
+  input, select, textarea {
+    background-color: #fff !important;
+    color: #000 !important;
+    border: 1px solid #ccc !important;
+    border-radius: 6px;
+    padding: 8px;
+    width: 100%;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: #000 !important;
+    box-shadow: 0 0 5px #000;
+    outline: none;
+  }
+  .btn-dark {
+    background-color: #000;
+    border-color: #000;
+    color: #fff;
+  }
+  .btn-dark:hover {
+    background-color: #333;
+  }
+  .badge {
+    font-weight: 600;
+  }
+  .btn-outline-dark {
+    color: #000;
+    border-color: #000;
+  }
+  .btn-outline-dark:hover {
+    background-color: #000;
+    color: #fff;
+  }
+</style>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {% block content %}
+<div class="container py-5">
+
+  <!-- Item Header Card -->
+  <div class="card shadow-lg border-4 rounded-4 mb-5 p-3" style="background: #e0e2e4a3;">
+    <div class="row g-0 align-items-center">
+
+      <!-- Poster -->
+      <div class="col-md-4 text-center p-3">
+        {% if item.poster %}
+          <img src="{{ item.poster.url }}" class="img-fluid rounded-4 shadow" alt="{{ item.title }}">
+        {% else %}
+          <div class="text-muted fst-italic mt-5">No poster available</div>
+        {% endif %}
+      </div>
+
+      <!-- Info Section -->
+      <div class="col-md-8 p-4">
+        <div class="d-flex justify-content-between align-items-start flex-wrap">
+          <div>
+            <h2 class="fw-bold mb-1 text-dark">{{ item.title }}</h2>
+            <p class="text-muted">{{ item.category }} • {{ item.release_year }}</p>
+          </div>
+
+          <!-- Favorite + Watchlist Buttons -->
+          {% if user.is_authenticated %}
+            <div class="d-flex flex-column gap-2">
+              <!-- Favorite -->
+              <form action="{% url 'cineapp:toggle_favorite' item.id %}" method="post" class="mb-0">
+                {% csrf_token %}
+                {% if is_favorited %}
+                  <button type="submit" class="btn btn-outline-danger btn-sm fw-bold rounded-pill px-3 py-1">💔 Remove</button>
+                {% else %}
+                  <button type="submit" class="btn btn-outline-success btn-sm fw-bold rounded-pill px-3 py-1">❤️ Favorite</button>
+                {% endif %}
+              </form>
+
+              <!-- Watchlist -->
+              <form action="{% url 'cineapp:toggle_watchlist' item.id %}" method="post">
+                {% csrf_token %}
+                {% if item.id in watchlist_items %}
+                  <button type="submit" class="btn btn-success btn-sm fw-bold rounded-pill px-3 py-1">✔ Remove from Watchlist</button>
+                {% else %}
+                  <button type="submit" class="btn btn-outline-primary btn-sm fw-bold rounded-pill px-3 py-1">+ Add to Watchlist</button>
+                {% endif %}
+              </form>
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Genres -->
+        {% if item.genres %}
+          <div class="mt-3 mb-2">
+            {% for genre in item.genres %}
+              <span class="badge bg-dark text-white me-1 mb-1 px-3 py-2 rounded-pill shadow-sm">{{ genre }}</span>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <!-- Theatrical Experience -->
+        {% if item.theatrical_experience %}
+          <p class="mt-3 mb-1 text-dark"><strong>Theatrical Experience:</strong> {{ item.theatrical_experience }}</p>
+        {% endif %}
+
+        <!-- Ratings -->
+        <p class="mt-2 text-danger fw-semibold">⭐ {{ item.average_rating }} ({{ item.reviews_count }} reviews)</p>
+
+        <!-- Description -->
+        <p class="mt-3 text-dark">{{ item.description }}</p>
+
+        <!-- Streaming Link -->
+        {% if item.streaming_link %}
+          <p><strong style="color:black;">Watch on:</strong> 
+            <a href="{{ item.streaming_link }}" class="text-primary text-decoration-none" target="_blank">{{ item.streaming_link }}</a>
+          </p>
+        {% endif %}
+
+        <!-- Social Share Buttons -->
+        <div class="mt-4">
+          <div class="d-flex align-items-center gap-3">
+            <strong>Share this:</strong>
+            <a href="https://api.whatsapp.com/send?text=Check this out: {{ request.build_absolute_uri }}" target="_blank">WhatsApp</a>
+            <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text=Check this out!" target="_blank">X (Twitter)</a>
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank">Facebook</a>
+          </div>
+        </div>
+
+        <!-- Edit/Delete (Owner Only) -->
+        {% if user.is_authenticated and user == item.created_by %}
+          <div class="mt-3">
+            <a href="{% url 'cineapp:edit_item' item.pk %}" class="btn btn-outline-secondary btn-sm me-2">Edit</a>
+            <a href="{% url 'cineapp:delete_item' item.pk %}" class="btn btn-outline-danger btn-sm">Delete</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- YouTube Video -->
+  {% if video_id %}
+    <div class="text-center mb-5">
+      <div class="ratio ratio-16x9 rounded-4 shadow-lg overflow-hidden">
+        <iframe src="https://www.youtube.com/embed/{{ video_id }}"
+                title="{{ item.title }}" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
+      </div>
+    </div>
+  {% endif %}
+
+  <hr class="text-secondary my-4">
+
+  <!-- Reviews Section -->
+  <div class="reviews-section mb-5">
+    <h4 class="fw-bold mb-3 text-dark">User Reviews</h4>
+
+    {% if item.reviews.count %}
+      {% for review in item.reviews.all %}
+        <div class="card mb-3 shadow-sm border-0 rounded-3" style="background: #e9eef2ff;">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <strong class="text-dark">{{ review.user.username }}</strong>
+              <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+            </div>
+            <p class="text-danger mb-1">⭐ {{ review.rating }}/5</p>
+            <p class="text-dark">{{ review.comment }}</p>
+
+            {% if user.is_authenticated and user == review.user %}
+              <div class="d-flex gap-2 mt-2">
+                <a href="{% url 'cineapp:edit_review' review.pk %}" class="btn btn-sm btn-outline-dark">Edit</a>
+                <a href="{% url 'cineapp:delete_review' review.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="text-muted fst-italic">No reviews yet — be the first to share your thoughts!</p>
+    {% endif %}
+  </div>
+
+  <!-- Add Review Form -->
+  {% if user.is_authenticated %}
+    <div class="card shadow-sm border-1 rounded-3 p-4 mb-5" style="background: #f8f9fa;">
+      <h5 class="fw-bold text-dark mb-3">Add Your Review</h5>
+      <form action="{% url 'cineapp:add_review' item.pk %}" method="post">
+        {% csrf_token %}
+        {% for field in review_form %}
+          <div class="mb-3">
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.errors %}
+              {% for error in field.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            {% endif %}
+          </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-dark fw-bold">Submit Review</button>
+      </form>
+    </div>
+  {% else %}
+    <p class="text-center text-dark">
+      <a href="{% url 'login' %}" class="text-primary text-decoration-none fw-bold">Log in</a> to leave a review.
+    </p>
+  {% endif %}
+
+  <!-- Similar Items -->
+  {% if similar_items %}
+    <hr class="my-4">
+    <h4 class="text-dark mb-3">Similar {{ item.category }}s</h4>
+    <div class="row">
+      {% for s in similar_items %}
+        <div class="col-md-3 mb-3">
+          <div class="card shadow-sm">
+            {% if s.poster %}
+              <img src="{{ s.poster.url }}" class="card-img-top" alt="{{ s.title }}">
+            {% endif %}
+            <div class="card-body text-center">
+              <h6 class="text-dark">{{ s.title }}</h6>
+              <a href="{% url 'cineapp:item_detail' s.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+</div>
+
+<!-- Styles -->
+<style>
+  html, body { height: 100%; background: #ffffff; color: #000; }
+  .card { background-color: #ffffff; border: 1px solid #dee2e6; }
+  input, select, textarea { background-color: #fff !important; color: #000 !important; border: 1px solid #ccc !important; border-radius: 6px; padding: 8px; width: 100%; }
+  input:focus, select:focus, textarea:focus { border-color: #000 !important; box-shadow: 0 0 5px #000; outline: none; }
+  .btn-dark { background-color: #000; border-color: #000; color: #fff; }
+  .btn-dark:hover { background-color: #333; }
+  .badge { font-weight: 600; }
+  .btn-outline-dark { color: #000; border-color: #000; }
+  .btn-outline-dark:hover { background-color: #000; color: #fff; }
+  .text-danger { color: red !important; }
+  .text-green { color: green !important; }
+</style>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {% block content %}
+<div class="container py-5">
+
+  <!-- Item Header Card -->
+  <div class="card shadow-lg border-4 rounded-4 mb-5 p-3" style="background: #e0e2e4a3;">
+    <div class="row g-0 align-items-center">
+
+      <!-- Poster -->
+      <div class="col-md-4 text-center p-3">
+        {% if item.poster %}
+          <img src="{{ item.poster.url }}" class="img-fluid rounded-4 shadow" alt="{{ item.title }}">
+        {% else %}
+          <div class="text-muted fst-italic mt-5">No poster available</div>
+        {% endif %}
+      </div>
+
+      <!-- Info Section -->
+      <div class="col-md-8 p-4">
+        <div class="d-flex justify-content-between align-items-start flex-wrap">
+          <div>
+            <h2 class="fw-bold mb-1 text-dark">{{ item.title }}</h2>
+            <p class="text-muted">{{ item.category }} • {{ item.release_year }}</p>
+          </div>
+
+          <!-- Favorite + Watchlist Buttons -->
+          {% if user.is_authenticated %}
+            <div class="d-flex flex-column gap-2">
+              <form action="{% url 'cineapp:toggle_favorite' item.id %}" method="post" class="mb-0">
+                {% csrf_token %}
+                {% if is_favorited %}
+                  <button type="submit" class="btn btn-outline-danger btn-sm fw-bold rounded-pill px-3 py-1">💔 Remove</button>
+                {% else %}
+                  <button type="submit" class="btn btn-outline-success btn-sm fw-bold rounded-pill px-3 py-1">❤️ Favorite</button>
+                {% endif %}
+              </form>
+              <form action="{% url 'cineapp:toggle_watchlist' item.id %}" method="post">
+                {% csrf_token %}
+                {% if item.id in watchlist_items %}
+                  <button type="submit" class="btn btn-success btn-sm fw-bold rounded-pill px-3 py-1">✔ Remove from Watchlist</button>
+                {% else %}
+                  <button type="submit" class="btn btn-outline-primary btn-sm fw-bold rounded-pill px-3 py-1">+ Add to Watchlist</button>
+                {% endif %}
+              </form>
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Genres -->
+        {% if item.genres %}
+          <div class="mt-3 mb-2">
+            {% for genre in item.genres %}
+              <span class="badge bg-dark text-white me-1 mb-1 px-3 py-2 rounded-pill shadow-sm">{{ genre }}</span>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <!-- Theatrical Experience -->
+        {% if item.theatrical_experience %}
+          <p class="mt-3 mb-1 text-dark"><strong>Theatrical Experience:</strong> {{ item.theatrical_experience }}</p>
+        {% endif %}
+
+        <!-- Ratings -->
+        <p class="mt-2 text-danger fw-semibold">⭐ {{ item.average_rating }} ({{ item.reviews_count }} reviews)</p>
+
+        <!-- Description -->
+        <p class="mt-3 text-dark">{{ item.description }}</p>
+
+        <!-- Streaming Link -->
+        {% if item.streaming_link %}
+          <p><strong style="color:black;">Watch on:</strong> 
+            <a href="{{ item.streaming_link }}" class="text-primary text-decoration-none" target="_blank">{{ item.streaming_link }}</a>
+          </p>
+        {% endif %}
+
+        <!-- Social Share Buttons -->
+        <div class="mt-4">
+          <div class="d-flex align-items-center gap-3">
+            <strong>Share this:</strong>
+            <a href="https://api.whatsapp.com/send?text=Check this out: {{ request.build_absolute_uri }}" target="_blank">WhatsApp</a>
+            <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text=Check this out!" target="_blank">X (Twitter)</a>
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank">Facebook</a>
+          </div>
+        </div>
+
+        <!-- Edit/Delete (Owner Only) -->
+        {% if user.is_authenticated and user == item.created_by %}
+          <div class="mt-3">
+            <a href="{% url 'cineapp:edit_item' item.pk %}" class="btn btn-outline-secondary btn-sm me-2">Edit</a>
+            <a href="{% url 'cineapp:delete_item' item.pk %}" class="btn btn-outline-danger btn-sm">Delete</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- YouTube Video -->
+  {% if video_id %}
+    <div class="text-center mb-5">
+      <div class="ratio ratio-16x9 rounded-4 shadow-lg overflow-hidden">
+        <iframe src="https://www.youtube.com/embed/{{ video_id }}"
+                title="{{ item.title }}" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
+      </div>
+    </div>
+  {% endif %}
+
+  <hr class="text-secondary my-4">
+
+  <!-- Reviews Section -->
+  <div class="reviews-section mb-5">
+    <h4 class="fw-bold mb-3 text-dark">User Reviews</h4>
+    {% if item.reviews.all %}
+      {% for review in item.reviews.all %}
+        <div class="card mb-3 shadow-sm border-0 rounded-3" style="background: #e9eef2ff;">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <strong class="text-dark">{{ review.user.username }}</strong>
+              <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+            </div>
+            <p class="text-danger mb-1">⭐ {{ review.rating }}/5</p>
+            <p class="text-dark">{{ review.comment }}</p>
+
+            {% if user.is_authenticated and user == review.user %}
+              <div class="d-flex gap-2 mt-2">
+                <a href="{% url 'cineapp:edit_review' review.pk %}" class="btn btn-sm btn-outline-dark">Edit</a>
+                <a href="{% url 'cineapp:delete_review' review.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+              </div>
+            {% endif %}
+
+            <!-- Replies -->
+            <div class="replies mt-3">
+              {% for reply in review.replies.all %}
+                <div class="reply-card p-2 mb-2 rounded shadow-sm bg-white">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <strong>{{ reply.user.username }}</strong>
+                    <small class="text-muted">{{ reply.created_at|date:"M d, Y H:i" }}</small>
+                  </div>
+                  <p class="mb-0">{{ reply.content }}</p>
+                </div>
+              {% endfor %}
+
+              {% if user.is_authenticated %}
+                <form action="{% url 'cineapp:add_reply' review.pk %}" method="post" class="d-flex gap-2 mt-2">
+                  {% csrf_token %}
+                  <input type="text" name="content" placeholder="Reply..." class="form-control form-control-sm">
+                  <button class="btn btn-sm btn-warning">Reply</button>
+                </form>
+              {% endif %}
+            </div>
+
+            
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="text-muted fst-italic">No reviews yet — be the first to share your thoughts!</p>
+    {% endif %}
+  </div>
+
+  <!-- Add Review Form -->
+  {% if user.is_authenticated %}
+    <div class="card shadow-sm border-1 rounded-3 p-4 mb-5" style="background: #f8f9fa;">
+      <h5 class="fw-bold text-dark mb-3">Add Your Review</h5>
+      <form action="{% url 'cineapp:add_review' item.pk %}" method="post">
+        {% csrf_token %}
+        {% for field in review_form %}
+          <div class="mb-3">
+            {{ field.label_tag }}
+            {{ field }}
+            {% for error in field.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-dark fw-bold">Submit Review</button>
+      </form>
+    </div>
+  {% else %}
+    <p class="text-center text-dark">
+      <a href="{% url 'login' %}" class="text-primary text-decoration-none fw-bold">Log in</a> to leave a review.
+    </p>
+  {% endif %}
+
+  <!-- Similar Items -->
+  {% if similar_items %}
+    <hr class="my-4">
+    <h4 class="text-dark mb-3">Similar {{ item.category }}s</h4>
+    <div class="row">
+      {% for s in similar_items %}
+        <div class="col-md-3 mb-3">
+          <div class="card shadow-sm">
+            {% if s.poster %}
+              <img src="{{ s.poster.url }}" class="card-img-top" alt="{{ s.title }}">
+            {% endif %}
+            <div class="card-body text-center">
+              <h6 class="text-dark">{{ s.title }}</h6>
+              <a href="{% url 'cineapp:item_detail' s.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+</div>
+
+<!-- Styles -->
+<style>
+  html, body { height: 100%; background: #ffffff; color: #000; }
+  .card { background-color: #ffffff; border: 1px solid #dee2e6; }
+  input, select, textarea { background-color: #fff !important; color: #000 !important; border: 1px solid #ccc !important; border-radius: 6px; padding: 8px; width: 100%; }
+  input:focus, select:focus, textarea:focus { border-color: #000 !important; box-shadow: 0 0 5px #000; outline: none; }
+  .btn-dark { background-color: #000; border-color: #000; color: #fff; }
+  .btn-dark:hover { background-color: #333; }
+  .badge { font-weight: 600; }
+  .btn-outline-dark { color: #000; border-color: #000; }
+  .btn-outline-dark:hover { background-color: #000; color: #fff; }
+  .text-danger { color: red !important; }
+  .reply-card { background-color: #f1f3f5; border-left: 3px solid #ffc107; }
+</style>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+
+
+{% block content %}
+<div class="container py-5">
+
+  <!-- Item Header Card -->
+  <div class="card shadow-lg border-4 rounded-4 mb-5 p-3" style="background: #e0e2e4a3;">
+    <div class="row g-0 align-items-center">
+
+      <!-- Poster -->
+      <div class="col-md-4 text-center p-3">
+        {% if item.poster %}
+          <img src="{{ item.poster.url }}" class="img-fluid rounded-4 shadow" alt="{{ item.title }}">
+        {% else %}
+          <div class="text-muted fst-italic mt-5">No poster available</div>
+        {% endif %}
+      </div>
+
+      <!-- Info Section -->
+      <div class="col-md-8 p-4">
+        <div class="d-flex justify-content-between align-items-start flex-wrap">
+          <div>
+            <h2 class="fw-bold mb-1 text-dark">{{ item.title }}</h2>
+            <p class="text-muted">{{ item.category }} • {{ item.release_year }}</p>
+          </div>
+
+          <!-- Favorite + Watchlist Buttons -->
+          {% if user.is_authenticated %}
+            <div class="d-flex flex-column gap-2">
+              <form action="{% url 'cineapp:toggle_favorite' item.id %}" method="post" class="mb-0">
+                {% csrf_token %}
+                {% if is_favorited %}
+                  <button type="submit" class="btn btn-outline-danger btn-sm fw-bold rounded-pill px-3 py-1">💔 Remove</button>
+                {% else %}
+                  <button type="submit" class="btn btn-outline-success btn-sm fw-bold rounded-pill px-3 py-1">❤️ Favorite</button>
+                {% endif %}
+              </form>
+              <form action="{% url 'cineapp:toggle_watchlist' item.id %}" method="post">
+                {% csrf_token %}
+                {% if item.id in watchlist_items %}
+                  <button type="submit" class="btn btn-success btn-sm fw-bold rounded-pill px-3 py-1">✔ Remove from Watchlist</button>
+                {% else %}
+                  <button type="submit" class="btn btn-outline-primary btn-sm fw-bold rounded-pill px-3 py-1">+ Add to Watchlist</button>
+                {% endif %}
+              </form>
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Genres -->
+        {% if item.genres %}
+          <div class="mt-3 mb-2">
+            {% for genre in item.genres %}
+              <span class="badge bg-dark text-white me-1 mb-1 px-3 py-2 rounded-pill shadow-sm">{{ genre }}</span>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <!-- Theatrical Experience -->
+        {% if item.theatrical_experience %}
+          <p class="mt-3 mb-1 text-dark"><strong>Theatrical Experience:</strong> {{ item.theatrical_experience }}</p>
+        {% endif %}
+
+        <!-- Ratings -->
+        <p class="mt-2 text-danger fw-semibold">⭐ {{ item.average_rating }} ({{ item.reviews_count }} reviews)</p>
+
+        <!-- Description -->
+        <p class="mt-3 text-dark">{{ item.description }}</p>
+
+        <!-- Streaming Link -->
+        {% if item.streaming_link %}
+          <p><strong style="color:black;">Watch on:</strong> 
+            <a href="{{ item.streaming_link }}" class="text-primary text-decoration-none" target="_blank">{{ item.streaming_link }}</a>
+          </p>
+        {% endif %}
+
+        <!-- Social Share Buttons -->
+        <div class="mt-4">
+          <div class="d-flex align-items-center gap-3">
+            <strong>Share this:</strong>
+            <a href="https://api.whatsapp.com/send?text=Check this out: {{ request.build_absolute_uri }}" target="_blank">WhatsApp</a>
+            <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text=Check this out!" target="_blank">X (Twitter)</a>
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank">Facebook</a>
+          </div>
+        </div>
+
+        <!-- Edit/Delete (Owner Only) -->
+        {% if user.is_authenticated and user == item.created_by %}
+          <div class="mt-3">
+            <a href="{% url 'cineapp:edit_item' item.pk %}" class="btn btn-outline-secondary btn-sm me-2">Edit</a>
+            <a href="{% url 'cineapp:delete_item' item.pk %}" class="btn btn-outline-danger btn-sm">Delete</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- YouTube Video -->
+  {% if video_id %}
+    <div class="text-center mb-5">
+      <div class="ratio ratio-16x9 rounded-4 shadow-lg overflow-hidden">
+        <iframe src="https://www.youtube.com/embed/{{ video_id }}"
+                title="{{ item.title }}" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
+      </div>
+    </div>
+  {% endif %}
+
+  <hr class="text-secondary my-4">
+
+  <!-- Reviews Section -->
+  <div class="reviews-section mb-5">
+    <h4 class="fw-bold mb-3 text-dark">User Reviews</h4>
+    {% if item.reviews.all %}
+      {% for review in item.reviews.all %}
+        <div class="card mb-3 shadow-sm border-0 rounded-3" style="background: #e9eef2ff;">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <strong class="text-dark">{{ review.user.username }}</strong>
+              <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+            </div>
+            <p class="text-danger mb-1">⭐ {{ review.rating }}/5</p>
+            <p class="text-dark">{{ review.comment }}</p>
+
+            {% if user.is_authenticated and user == review.user %}
+              <div class="d-flex gap-2 mt-2">
+                <a href="{% url 'cineapp:edit_review' review.pk %}" class="btn btn-sm btn-outline-dark">Edit</a>
+                <a href="{% url 'cineapp:delete_review' review.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+              </div>
+            {% endif %}
+
+            <!-- Replies -->
+            <div class="replies mt-3">
+              {% for reply in review.replies.all %}
+                <div class="reply-card p-2 mb-2 rounded shadow-sm bg-white d-flex justify-content-between align-items-start">
+                  <div>
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                      <strong>{{ reply.user.username }}</strong>
+                      <small class="text-muted">{{ reply.created_at|date:"M d, Y H:i" }}</small>
+                    </div>
+                    <p class="mb-0">{{ reply.content }}</p>
+                  </div>
+
+                  {% if user.is_authenticated and user == reply.user %}
+                    <div>
+                      <a href="{% url 'cineapp:delete_reply' reply.pk %}" class="btn btn-sm btn-outline-danger ms-2" onclick="return confirm('Are you sure you want to delete this reply?');">Delete</a>
+                    </div>
+                  {% endif %}
+                </div>
+              {% endfor %}
+
+              {% if user.is_authenticated %}
+                <form action="{% url 'cineapp:add_reply' review.pk %}" method="post" class="d-flex gap-2 mt-2">
+                  {% csrf_token %}
+                  <input type="text" name="content" placeholder="Reply..." class="form-control form-control-sm">
+                  <button class="btn btn-sm btn-warning">Reply</button>
+                </form>
+              {% endif %}
+            </div>
+
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="text-muted fst-italic">No reviews yet — be the first to share your thoughts!</p>
+    {% endif %}
+  </div>
+
+  <!-- Add Review Form -->
+  {% if user.is_authenticated %}
+    <div class="card shadow-sm border-1 rounded-3 p-4 mb-5" style="background: #f8f9fa;">
+      <h5 class="fw-bold text-dark mb-3">Add Your Review</h5>
+      <form action="{% url 'cineapp:add_review' item.pk %}" method="post">
+        {% csrf_token %}
+        {% for field in review_form %}
+          <div class="mb-3">
+            {{ field.label_tag }}
+            {{ field }}
+            {% for error in field.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-dark fw-bold">Submit Review</button>
+      </form>
+    </div>
+  {% else %}
+    <p class="text-center text-dark">
+      <a href="{% url 'login' %}" class="text-primary text-decoration-none fw-bold">Log in</a> to leave a review.
+    </p>
+  {% endif %}
+
+  <!-- Similar Items -->
+  {% if similar_items %}
+    <hr class="my-4">
+    <h4 class="text-dark mb-3">Similar {{ item.category }}s</h4>
+    <div class="row">
+      {% for s in similar_items %}
+        <div class="col-md-3 mb-3">
+          <div class="card shadow-sm">
+            {% if s.poster %}
+              <img src="{{ s.poster.url }}" class="card-img-top" alt="{{ s.title }}">
+            {% endif %}
+            <div class="card-body text-center">
+              <h6 class="text-dark">{{ s.title }}</h6>
+              <a href="{% url 'cineapp:item_detail' s.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+</div>
+
+<!-- Styles -->
+<style>
+  html, body { height: 100%; background: #ffffff; color: #000; }
+  .card { background-color: #ffffff; border: 1px solid #dee2e6; }
+  input, select, textarea { background-color: #fff !important; color: #000 !important; border: 1px solid #ccc !important; border-radius: 6px; padding: 8px; width: 100%; }
+  input:focus, select:focus, textarea:focus { border-color: #000 !important; box-shadow: 0 0 5px #000; outline: none; }
+  .btn-dark { background-color: #000; border-color: #000; color: #fff; }
+  .btn-dark:hover { background-color: #333; }
+  .badge { font-weight: 600; }
+  .btn-outline-dark { color: #000; border-color: #000; }
+  .btn-outline-dark:hover { background-color: #000; color: #fff; }
+  .text-danger { color: red !important; }
+  .reply-card { background-color: #f1f3f5; border-left: 3px solid #ffc107; }
+</style>
+{% endblock %}
+

@@ -1,0 +1,590 @@
+{% extends 'cineapp/base.html' %}
+
+{% comment %} {% block content %}
+<h2>{% if item %}Edit{% else %}Add{% endif %} Item</h2>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button class="btn btn-success">Save</button>
+  <a href="{% url 'cineapp:home' %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %} {% endcomment %}
+
+{% comment %} {% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card shadow-sm mt-5" style="background-color:#1a1a1a; color:#f8f9fa;">
+      <div class="card-body">
+        <h3 class="card-title text-center mb-4" style="color:#ffc107;">
+          {% if item %}Edit{% else %}Add{% endif %} Item
+        </h3>
+
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {% for field in form %}
+            <div class="mb-3">
+              {{ field.label_tag }}
+              {{ field }}
+              {% for error in field.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+
+          <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-warning">Save</button>
+            <a href="{% url 'cineapp:home' %}" class="btn btn-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  input, select, textarea {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #444 !important;
+    border-radius: 5px;
+    padding: 10px;
+    width: 100%;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: #ffc107 !important;
+    box-shadow: 0 0 5px #ffc107;
+    outline: none;
+  }
+
+  .btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #1a1a1a;
+    font-weight: bold;
+  }
+
+  .btn-warning:hover {
+    background-color: #e0ac00;
+    border-color: #e0ac00;
+  }
+
+  .btn-secondary {
+    background-color: #444;
+    border-color: #555;
+    color: #f8f9fa;
+  }
+
+  .btn-secondary:hover {
+    background-color: #555;
+    border-color: #666;
+  }
+</style>
+{% endblock %} {% endcomment %}
+
+
+{% comment %} {% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card shadow-sm mt-5" style="background-color:#1a1a1a; color:#f8f9fa;">
+      <div class="card-body">
+        <h3 class="card-title text-center mb-4" style="color:#ffc107;">
+          {% if item %}Edit{% else %}Add{% endif %} Item
+        </h3>
+
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">
+            {% for error in form.non_field_errors %}
+              <div>{{ error }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {% for field in form %}
+            <div class="mb-3">
+              {{ field.label_tag }}
+              {{ field }}
+              {% if field.errors %}
+                {% for error in field.errors %}
+                  <div class="text-danger small mt-1">{{ error }}</div>
+                {% endfor %}
+              {% endif %}
+            </div>
+          {% endfor %}
+
+          <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-warning">Save</button>
+            <a href="{% url 'cineapp:home' %}" class="btn btn-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  input, select, textarea {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #444 !important;
+    border-radius: 5px;
+    padding: 10px;
+    width: 100%;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: #ffc107 !important;
+    box-shadow: 0 0 5px #ffc107;
+    outline: none;
+  }
+
+  .btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #1a1a1a;
+    font-weight: bold;
+  }
+
+  .btn-warning:hover {
+    background-color: #e0ac00;
+    border-color: #e0ac00;
+  }
+
+  .btn-secondary {
+    background-color: #444;
+    border-color: #555;
+    color: #f8f9fa;
+  }
+
+  .btn-secondary:hover {
+    background-color: #555;
+    border-color: #666;
+  }
+
+  .alert-danger {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 15px;
+  }
+</style>
+{% endblock %} {% endcomment %} -->
+
+
+{% comment %} {% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card shadow-sm mt-5" style="background-color:#1a1a1a; color:#f8f9fa;">
+      <div class="card-body">
+        <h3 class="card-title text-center mb-4" style="color:#ffc107;">
+          {% if item %}Edit{% else %}Add{% endif %} Item
+        </h3>
+
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">
+            {% for error in form.non_field_errors %}
+              <div>{{ error }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          
+          <!-- Loop through fields -->
+          {% for field in form %}
+            <div class="mb-3">
+              {{ field.label_tag }}
+              
+              {% if field.name == "genres" %}
+                <!-- Render MultiSelectField as checkboxes -->
+                <div class="d-flex flex-wrap gap-2">
+                  {% for choice in field.field.choices %}
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox"
+                             name="{{ field.name }}"
+                             value="{{ choice.0 }}"
+                             id="{{ field.id_for_label }}_{{ forloop.counter }}"
+                             {% if choice.0 in field.value %}checked{% endif %}>
+                      <label class="form-check-label" for="{{ field.id_for_label }}_{{ forloop.counter }}">
+                        {{ choice.1 }}
+                      </label>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% else %}
+                {{ field }}
+              {% endif %}
+              
+              {% if field.errors %}
+                {% for error in field.errors %}
+                  <div class="text-danger small mt-1">{{ error }}</div>
+                {% endfor %}
+              {% endif %}
+            </div>
+          {% endfor %}
+
+          <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-warning">Save</button>
+            <a href="{% url 'cineapp:home' %}" class="btn btn-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  input, select, textarea {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #444 !important;
+    border-radius: 5px;
+    padding: 10px;
+    width: 100%;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: #ffc107 !important;
+    box-shadow: 0 0 5px #ffc107;
+    outline: none;
+  }
+
+  .btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #1a1a1a;
+    font-weight: bold;
+  }
+
+  .btn-warning:hover {
+    background-color: #e0ac00;
+    border-color: #e0ac00;
+  }
+
+  .btn-secondary {
+    background-color: #444;
+    border-color: #555;
+    color: #f8f9fa;
+  }
+
+  .btn-secondary:hover {
+    background-color: #555;
+    border-color: #666;
+  }
+
+  .alert-danger {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 15px;
+  }
+</style>
+{% endblock %}  {% endcomment %}
+
+
+{% comment %} {% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card shadow-sm mt-5" style="background-color:#1a1a1a; color:#f8f9fa;">
+      <div class="card-body">
+        <h3 class="card-title text-center mb-4" style="color:#ffc107;">
+          {% if item %}Edit{% else %}Add{% endif %} Item
+        </h3>
+
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">
+            {% for error in form.non_field_errors %}
+              <div>{{ error }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          {% for field in form %}
+            <div class="mb-3">
+              {{ field.label_tag }}
+
+              {# ✅ Handle Genre dropdown #}
+              {% if field.name == "genre" %}
+                <select name="{{ field.name }}" class="form-select">
+                  {% for choice in field.field.choices %}
+                    <option value="{{ choice.0 }}" {% if field.value == choice.0 %}selected{% endif %}>
+                      {{ choice.1 }}
+                    </option>
+                  {% endfor %}
+                </select>
+
+              {# ✅ Handle Streaming Link field #}
+              {% elif field.name == "streaming_link" %}
+                <input type="url"
+                       name="{{ field.name }}"
+                       class="form-control"
+                       value="{{ field.value|default_if_none:'' }}"
+                       placeholder="Enter streaming link (optional)">
+
+              {# ✅ Default field rendering #}
+              {% else %}
+                {{ field }}
+              {% endif %}
+
+              {% if field.errors %}
+                {% for error in field.errors %}
+                  <div class="text-danger small mt-1">{{ error }}</div>
+                {% endfor %}
+              {% endif %}
+            </div>
+          {% endfor %}
+
+          <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-warning">Save</button>
+            <a href="{% url 'cineapp:home' %}" class="btn btn-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  input, select, textarea {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #444 !important;
+    border-radius: 5px;
+    padding: 10px;
+    width: 100%;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: #ffc107 !important;
+    box-shadow: 0 0 5px #ffc107;
+    outline: none;
+  }
+
+  .btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #1a1a1a;
+    font-weight: bold;
+  }
+
+  .btn-warning:hover {
+    background-color: #e0ac00;
+    border-color: #e0ac00;
+  }
+
+  .btn-secondary {
+    background-color: #444;
+    border-color: #555;
+    color: #f8f9fa;
+  }
+
+  .btn-secondary:hover {
+    background-color: #555;
+    border-color: #666;
+  }
+
+  .alert-danger {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 15px;
+  }
+</style>
+{% endblock %} {% endcomment %}
+
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card shadow-sm mt-5" style="background-color:#1a1a1a; color:#f8f9fa;">
+      <div class="card-body">
+        <h3 class="card-title text-center mb-4" style="color:#ffc107;">
+          {% if item %}Edit{% else %}Add{% endif %} Item
+        </h3>
+
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">
+            {% for error in form.non_field_errors %}
+              <div>{{ error }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          {% for field in form %}
+            <div class="mb-3">
+              {{ field.label_tag }}
+
+              {% if field.name == "genres" %}
+                <div class="genre-grid">
+                  {% for choice in field.field.choices %}
+                    <label class="genre-item">
+                      <input type="checkbox" name="{{ field.name }}" value="{{ choice.0 }}"
+                        {% if choice.0 in field.value %}checked{% endif %}> {{ choice.1 }}
+                    </label>
+                  {% endfor %}
+                </div>
+
+              {% elif field.name == "streaming_link" %}
+                <input type="url"
+                       name="{{ field.name }}"
+                       class="form-control"
+                       value="{{ field.value|default_if_none:'' }}"
+                       placeholder="Enter streaming link (optional)">
+
+              {% else %}
+                {{ field }}
+              {% endif %}
+
+              {% if field.errors %}
+                {% for error in field.errors %}
+                  <div class="text-danger small mt-1">{{ error }}</div>
+                {% endfor %}
+              {% endif %}
+            </div>
+          {% endfor %}
+
+          <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-warning">Save</button>
+            <a href="{% url 'cineapp:home' %}" class="btn btn-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  input, select, textarea {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #444 !important;
+    border-radius: 5px;
+    padding: 10px;
+    width: 100%;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: #ffc107 !important;
+    box-shadow: 0 0 5px #ffc107;
+    outline: none;
+  }
+
+  .btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #1a1a1a;
+    font-weight: bold;
+  }
+
+  .btn-warning:hover {
+    background-color: #e0ac00;
+    border-color: #e0ac00;
+  }
+
+  .btn-secondary {
+    background-color: #444;
+    border-color: #555;
+    color: #f8f9fa;
+  }
+
+  .btn-secondary:hover {
+    background-color: #555;
+    border-color: #666;
+  }
+
+  .alert-danger {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 15px;
+  }
+
+  /* ✅ Genre grid layout */
+  .genre-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px 12px;
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 10px;
+  }
+
+  .genre-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+  }
+
+  .genre-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #ffc107;
+  }
+</style>
+{% endblock %}
+

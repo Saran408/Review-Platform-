@@ -1,0 +1,21 @@
+<h2>My Watchlist</h2>
+<p>You’ve watched {{ progress }}% of your list!</p>
+
+<div class="row">
+    {% for w in watchlist %}
+    <div class="col-md-3 mb-3">
+        <div class="card h-100">
+            {% if w.item.poster %}
+            <img src="{{ w.item.poster.url }}" class="card-img-top" alt="{{ w.item.title }}">
+            {% endif %}
+            <div class="card-body">
+                <h6>{{ w.item.title }}</h6>
+                <p>Status: {{ w.get_status_display }}</p>
+                <a href="{% url 'cineapp:item_detail' w.item.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>No items in your watchlist yet.</p>
+    {% endfor %}
+</div>

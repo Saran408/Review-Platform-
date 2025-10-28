@@ -1,0 +1,184 @@
+{% extends 'cineapp/base.html' %}
+{% block content %}
+<h2>{{ category }}s</h2>
+<div class="row">
+  {% for item in items %}
+    <div class="col-md-3 mb-3">
+      <div class="card h-100">
+        {% if item.poster %}<img src="{{ item.poster.url }}" class="card-img-top">{% endif %}
+        <div class="card-body">
+          <h5>{{ item.title }}</h5>
+          <p class="small text-muted">{{ item.release_year }}</p>
+          <p>⭐ {{ item.average_rating }}</p>
+          <a href="{% url 'cineapp:item_detail' item.pk %}" class="btn btn-sm btn-primary">View</a>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <p>No items in this category yet.</p>
+  {% endfor %}
+</div>
+
+<nav aria-label="page">
+  <ul class="pagination">
+    {% if items.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page={{ items.previous_page_number }}">Previous</a></li>
+    {% endif %}
+    <li class="page-item disabled"><span class="page-link">Page {{ items.number }} of {{ items.paginator.num_pages }}</span></li>
+    {% if items.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ items.next_page_number }}">Next</a></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endblock %}
+
+
+
+{% comment %} {% block content %}
+
+<h2>{{ category_name }} List</h2>
+
+<div class="row">
+  {% for item in items %}
+    <div class="col-md-3 mb-3 item-card">
+      <div class="card h-100">
+        {% if item.poster %}
+          <img src="{{ item.poster.url }}" class="card-img-top card-image" alt="{{ item.title }}">
+        {% else %}
+          <div class="card-img-top placeholder-img"></div>
+        {% endif %}
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{ item.title }}</h5>
+          <p class="card-text small text-muted">{{ item.category }} • {{ item.release_year }}</p>
+
+          <!-- Show Genres here -->
+          <p class="card-text small text-secondary">
+            Genres: {{ item.genres|join:", " }}
+          </p>
+
+          <p class="mb-1">⭐ {{ item.average_rating }} ({{ item.reviews_count }})</p>
+          <a href="{% url 'cineapp:item_detail' item.pk %}" class="btn btn-primary btn-sm mt-auto">View</a>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <p class="text-muted">No items available in this category.</p>
+  {% endfor %}
+</div>
+
+<style>
+.card-image {
+  object-fit: cover;
+  height: 250px;
+  width: 100%;
+}
+
+.placeholder-img {
+  height: 250px;
+  background-color: #2a2a2a;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body .btn {
+  margin-top: auto;
+}
+</style>
+
+{% endblock %} {% endcomment %}
+
+
+
+{% comment %} 
+{% block content %}
+
+<h2 class="mb-4">{{ category_name }} List</h2>
+
+<!-- 🔍 Search bar and Genre Dropdown -->
+<form method="get" class="mb-4 d-flex flex-wrap align-items-center gap-2">
+  <input
+    type="text"
+    name="search"
+    value="{{ request.GET.search|default:'' }}"
+    placeholder="Search {{ category_name }}..."
+    class="form-control"
+    style="max-width: 250px;"
+  />
+
+  <select name="genre" class="form-select" style="max-width: 200px;">
+    <option value="">All Genres</option>
+    {% for genre in genres %}
+      <option value="{{ genre }}" {% if genre == request.GET.genre %}selected{% endif %}>
+        {{ genre }}
+      </option>
+    {% endfor %}
+  </select>
+
+  <button type="submit" class="btn btn-primary">Filter</button>
+</form>
+
+<!-- 🎬 Item List -->
+<div class="row">
+  {% if items %}
+    {% for item in items %}
+      <div class="col-sm-6 col-md-4 col-lg-3 mb-4 item-card">
+        <div class="card h-100 shadow-sm rounded-4">
+          {% if item.poster %}
+            <img src="{{ item.poster.url }}" class="card-img-top card-image rounded-top-4" alt="{{ item.title }}">
+          {% else %}
+            <div class="card-img-top placeholder-img rounded-top-4 d-flex align-items-center justify-content-center">
+              <span class="text-muted">No Image</span>
+            </div>
+          {% endif %}
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">{{ item.title }}</h5>
+            <p class="card-text small text-muted">{{ item.category }} • {{ item.release_year }}</p>
+
+            {% if item.genres %}
+              <p class="card-text small text-secondary mb-1">
+                Genres: {{ item.genres|join:", " }}
+              </p>
+            {% endif %}
+
+            <p class="mb-2 text-danger fw-semibold">⭐ {{ item.average_rating }} ({{ item.reviews_count }})</p>
+            <a href="{% url 'cineapp:item_detail' item.pk %}" class="btn btn-primary btn-sm mt-auto">View</a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="text-muted">No items found matching your filters.</p>
+  {% endif %}
+</div>
+
+<!-- 🎨 Styles -->
+<style>
+.card-image {
+  object-fit: cover;
+  height: 250px;
+  width: 100%;
+}
+
+.placeholder-img {
+  height: 250px;
+  background-color: #2a2a2a;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body .btn {
+  margin-top: auto;
+}
+
+form .form-control, form .form-select {
+  min-width: 200px;
+}
+</style>
+
+{% endblock %} {% endcomment %}

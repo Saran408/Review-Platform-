@@ -1,0 +1,909 @@
+{% extends 'cineapp/base.html' %}
+
+{% comment %} 
+{% block content %}
+
+<!-- Search Bar -->
+<div class="row mb-4">
+  <div class="col-md-6 mx-auto">
+    <form method="GET" action="{% url 'cineapp:home' %}">
+      <div class="input-group">
+        <input type="text" name="q" class="form-control" placeholder="Search movies, shows..." value="{{ request.GET.q|default:'' }}">
+        <button class="btn btn-warning" type="submit">Search</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2>Top Rated</h2>
+  {% if user.is_authenticated %}
+    <a class="btn btn-sm btn-success" href="{% url 'cineapp:add_item' %}">Add Item</a>
+  {% endif %}
+</div>
+
+<div class="row mb-4">
+  {% for item in top %}
+    <div class="col-md-3 mb-3">
+      <div class="card h-100">
+        {% if item.poster %}
+          <img src="{{ item.poster.url }}" class="card-img-top card-image" alt="{{ item.title }}">
+        {% else %}
+          <div class="card-img-top placeholder-img"></div>
+        {% endif %}
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{ item.title }}</h5>
+          <p class="card-text small text-muted">{{ item.category }} • {{ item.release_year }}</p>
+          <p class="mb-1">⭐ {{ item.average_rating }} ({{ item.reviews_count }})</p>
+          <a href="{% url 'cineapp:item_detail' item.pk %}" class="btn btn-primary btn-sm mt-auto">View</a>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <p class="text-muted">No items yet. Add one!</p>
+  {% endfor %}
+</div>
+
+<h3>Recent Additions</h3>
+<div class="row">
+  {% for item in recent %}
+    <div class="col-md-3 mb-3">
+      <div class="card h-100">
+        {% if item.poster %}
+          <img src="{{ item.poster.url }}" class="card-img-top card-image" alt="{{ item.title }}">
+        {% else %}
+          <div class="card-img-top placeholder-img"></div>
+        {% endif %}
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{ item.title }}</h5>
+          <p class="small text-muted">{{ item.category }}</p>
+          <a href="{% url 'cineapp:item_detail' item.pk %}" class="btn btn-outline-primary btn-sm mt-auto">View</a>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<style>
+.card-image {
+  height: 150px;           /* fixed height for all images */
+  object-fit: cover;        /* crop images to fill without distortion */
+  width: 100%;
+}
+
+.placeholder-img {
+  height: 250px;
+  background-color: #2a2a2a;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body .btn {
+  margin-top: auto;  /* push the button to bottom */
+}
+</style>
+{% endblock %} {% endcomment %}
+
+
+
+
+{% comment %} {% block content %}
+
+<!-- Search Bar -->
+<div class="row mb-4">
+  <div class="col-md-6 mx-auto" style="width: 96%;">
+    <input type="text" id="search-input" class="form-control" placeholder="Search movies, shows...">
+  </div>
+</div>
+
+<!-- Top Rated Section -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2>Top Rated</h2>
+  {% if user.is_authenticated and user.is_staff %}
+    <a class="btn btn-sm btn-success" href="{% url 'cineapp:add_item' %}">Add Item</a>
+  {% endif %} 
+  
+</div>
+
+<div class="row mb-4" id="top-rated-container">
+  {% for item in top %}
+    <div class="col-md-3 mb-3 item-card" data-title="{{ item.title|lower }}">
+      <div class="card h-100">
+        {% if item.poster %}
+          <img src="{{ item.poster.url }}" class="card-img-top card-image" alt="{{ item.title }}">
+        {% else %}
+          <div class="card-img-top placeholder-img"></div>
+        {% endif %}
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{ item.title }}</h5>
+          <p class="card-text small text-muted">{{ item.category }} • {{ item.release_year }}</p>
+          <p class="mb-1">⭐ {{ item.average_rating }} ({{ item.reviews_count }})</p>
+          <a href="{% url 'cineapp:item_detail' item.pk %}" class="btn btn-primary btn-sm mt-auto">View</a>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <p class="text-muted">No items yet. Add one!</p>
+  {% endfor %}
+</div>
+
+<!-- Recent Additions -->
+<h3>Recent Additions</h3>
+<div class="row" id="recent-container">
+  {% for item in recent %}
+    <div class="col-md-3 mb-3 item-card" data-title="{{ item.title|lower }}">
+      <div class="card h-100">
+        {% if item.poster %}
+          <img src="{{ item.poster.url }}" class="card-img-top card-image" alt="{{ item.title }}">
+        {% else %}
+          <div class="card-img-top placeholder-img"></div>
+        {% endif %}
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{ item.title }}</h5>
+          <p class="small text-muted">{{ item.category }}</p>
+          <a href="{% url 'cineapp:item_detail' item.pk %}" class="btn btn-outline-primary btn-sm mt-auto">View</a>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<style>
+.card-image {
+  
+  object-fit: cover;
+  
+}
+
+.placeholder-img {
+  height: 250px;
+  background-color: #2a2a2a;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body .btn {
+  margin-top: auto;
+}
+
+#search-input {
+
+  width: 100%;
+  border-radius: 50px;
+  padding: 12px 20px;
+  border: 2px solid #ffc107;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, #20c997, #28a745);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+</style>
+
+<!-- Live Search Script -->
+<script>
+  const searchInput = document.getElementById('search-input');
+  const itemCards = document.querySelectorAll('.item-card');
+
+  searchInput.addEventListener('keyup', function() {
+    const query = this.value.toLowerCase();
+
+    itemCards.forEach(card => {
+      const title = card.dataset.title;
+      if (title.includes(query)) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  });
+</script>
+
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {% block content %}
+
+<!-- Filter Section -->
+<div class="row mb-4">
+  <div class="col-md-3">
+    <select id="genre-filter" class="form-select">
+      <option value="">All Genres</option>
+      {% for genre in genres %}
+        <option value="{{ genre }}" {% if genre == selected_genre %}selected{% endif %}>{{ genre }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="col-md-3">
+    <select id="category-filter" class="form-select">
+      <option value="">All Categories</option>
+      {% for cat in categories %}
+        <option value="{{ cat }}" {% if cat == selected_category %}selected{% endif %}>{{ cat }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="col-md-6">
+    <input type="text" id="search-input" class="form-control" placeholder="Search movies, shows...">
+  </div>
+</div>
+
+<!-- Top Rated Section -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2>Top Rated</h2>
+  {% if user.is_authenticated and user.is_staff %}
+    <a class="btn btn-sm btn-success" href="{% url 'cineapp:add_item' %}">Add Item</a>
+  {% endif %} 
+</div>
+
+<div class="row mb-4" id="top-rated-container">
+  {% for item in top %}
+    <div class="col-md-3 mb-3 item-card" data-title="{{ item.title|lower }}">
+      <div class="card h-100">
+        {% if item.poster %}
+          <img src="{{ item.poster.url }}" class="card-img-top card-image" alt="{{ item.title }}">
+        {% else %}
+          <div class="card-img-top placeholder-img"></div>
+        {% endif %}
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{ item.title }}</h5>
+          <p class="card-text small text-muted">{{ item.category }} • {{ item.release_year }}</p>
+          <p class="mb-1">⭐ {{ item.average_rating }} ({{ item.reviews_count }})</p>
+          <a href="{% url 'cineapp:item_detail' item.pk %}" class="btn btn-primary btn-sm mt-auto">View</a>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <p class="text-muted">No items yet.</p>
+  {% endfor %}
+</div>
+
+<!-- Recent Additions -->
+<h3>Recent Additions</h3>
+<div class="row" id="recent-container">
+  {% for item in recent %}
+    <div class="col-md-3 mb-3 item-card" data-title="{{ item.title|lower }}">
+      <div class="card h-100">
+        {% if item.poster %}
+          <img src="{{ item.poster.url }}" class="card-img-top card-image" alt="{{ item.title }}">
+        {% else %}
+          <div class="card-img-top placeholder-img"></div>
+        {% endif %}
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{ item.title }}</h5>
+          <p class="small text-muted">{{ item.category }}</p>
+          <a href="{% url 'cineapp:item_detail' item.pk %}" class="btn btn-outline-primary btn-sm mt-auto">View</a>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<style>
+.card-image {
+  object-fit: cover;
+}
+
+.placeholder-img {
+  height: 250px;
+  background-color: #2a2a2a;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body .btn {
+  margin-top: auto;
+}
+
+#search-input {
+  width: 100%;
+  border-radius: 50px;
+  padding: 12px 20px;
+  border: 2px solid #ffc107;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+
+.form-select {
+  border-radius: 50px;
+  padding: 8px 15px;
+  border: 2px solid #ffc107;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, #20c997, #28a745);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+</style>
+
+<!-- Live Search & Filter Script -->
+<script>
+  const searchInput = document.getElementById('search-input');
+  const itemCards = document.querySelectorAll('.item-card');
+  const genreFilter = document.getElementById('genre-filter');
+  const categoryFilter = document.getElementById('category-filter');
+
+  // Live search
+  searchInput.addEventListener('keyup', function() {
+    const query = this.value.toLowerCase();
+    itemCards.forEach(card => {
+      const title = card.dataset.title;
+      card.style.display = title.includes(query) ? '' : 'none';
+    });
+  });
+
+  // Filter by genre/category (server-side)
+  function applyFilter() {
+    const genre = genreFilter.value;
+    const category = categoryFilter.value;
+    let url = window.location.pathname + '?';
+    if (genre) url += 'genre=' + genre + '&';
+    if (category) url += 'category=' + category;
+    window.location.href = url;
+  }
+
+  genreFilter.addEventListener('change', applyFilter);
+  categoryFilter.addEventListener('change', applyFilter);
+</script>
+
+{% endblock %} {% endcomment %}
+
+
+
+{% comment %} {% block content %}
+<!-- Filter Section -->
+<div class="row mb-4">
+  <div class="col-md-3">
+    <select id="genre-filter" class="form-select">
+      <option value="">All Genres</option>
+      {% for genre in genres %}
+        <option value="{{ genre }}" {% if genre == selected_genre %}selected{% endif %}>{{ genre }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="col-md-3">
+    <select id="category-filter" class="form-select">
+      <option value="">All Categories</option>
+      {% for cat in categories %}
+        <option value="{{ cat }}" {% if cat == selected_category %}selected{% endif %}>{{ cat }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="col-md-6">
+    <input type="text" id="search-input" class="form-control" placeholder="Search movies, shows...">
+  </div>
+</div>
+
+<!-- Top Rated Section -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2>Top Rated</h2>
+  {% if user.is_authenticated and user.is_staff %}
+    <a class="btn btn-sm btn-success" href="{% url 'cineapp:add_item' %}">Add Item</a>
+  {% endif %} 
+</div>
+
+<div class="row mb-4" id="top-rated-container">
+  {% for item in top %}
+    <div class="col-md-3 mb-3 item-card" data-title="{{ item.title|lower }}">
+      <div class="card h-100">
+        {% if item.poster %}
+          <img src="{{ item.poster.url }}" class="card-img-top card-image" alt="{{ item.title }}">
+        {% else %}
+          <div class="card-img-top placeholder-img"></div>
+        {% endif %}
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{ item.title }}</h5>
+          <p class="card-text small text-muted">{{ item.category }} • {{ item.release_year }}</p>
+          <p class="mb-1">⭐ {{ item.average_rating }} ({{ item.reviews_count }})</p>
+          <a href="{% url 'cineapp:item_detail' item.pk %}" class="btn btn-primary btn-sm mt-auto">View</a>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <p class="text-muted">No items yet.</p>
+  {% endfor %}
+</div>
+
+<!-- Recent Additions -->
+<h3>Recent Additions</h3>
+<div class="row" id="recent-container">
+  {% for item in recent %}
+    <div class="col-md-3 mb-3 item-card" data-title="{{ item.title|lower }}">
+      <div class="card h-100">
+        {% if item.poster %}
+          <img src="{{ item.poster.url }}" class="card-img-top card-image" alt="{{ item.title }}">
+        {% else %}
+          <div class="card-img-top placeholder-img"></div>
+        {% endif %}
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{ item.title }}</h5>
+          <p class="small text-muted">{{ item.category }}</p>
+          <a href="{% url 'cineapp:item_detail' item.pk %}" class="btn btn-outline-primary btn-sm mt-auto">View</a>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<style>
+.card-image {
+  object-fit: cover;
+}
+
+.placeholder-img {
+  height: 250px;
+  background-color: #2a2a2a;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body .btn {
+  margin-top: auto;
+}
+
+#search-input {
+  width: 100%;
+  border-radius: 50px;
+  padding: 12px 20px;
+  border: 2px solid #ffc107;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+
+.form-select {
+  border-radius: 50px;
+  padding: 8px 15px;
+  border: 2px solid #ffc107;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, #20c997, #28a745);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+</style>
+
+<!-- Live Search & Filter Script -->
+<script>
+  const searchInput = document.getElementById('search-input');
+  const itemCards = document.querySelectorAll('.item-card');
+  const genreFilter = document.getElementById('genre-filter');
+  const categoryFilter = document.getElementById('category-filter');
+
+  // Live search
+  searchInput.addEventListener('keyup', function() {
+    const query = this.value.toLowerCase();
+    itemCards.forEach(card => {
+      const title = card.dataset.title;
+      card.style.display = title.includes(query) ? '' : 'none';
+    });
+  });
+
+  // Filter by genre/category (server-side)
+  function applyFilter() {
+    const genre = genreFilter.value;
+    const category = categoryFilter.value;
+    let url = window.location.pathname + '?';
+    if (genre) url += 'genre=' + genre + '&';
+    if (category) url += 'category=' + category;
+    window.location.href = url;
+  }
+
+  genreFilter.addEventListener('change', applyFilter);
+  categoryFilter.addEventListener('change', applyFilter);
+</script>
+
+{% endblock %} {% endcomment %}
+
+
+
+{% comment %} {% block content %}
+
+<!-- Filter Section -->
+<div class="row mb-4 justify-content-center">
+  <div class="col-md-3 mb-2">
+    <select id="genre-filter" class="form-select filter-select">
+      <option value="">All Genres</option>
+      {% for genre in genres %}
+        <option value="{{ genre }}" {% if genre == selected_genre %}selected{% endif %}>{{ genre }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="col-md-3 mb-2">
+    <select id="category-filter" class="form-select filter-select">
+      <option value="">All Categories</option>
+      {% for cat in categories %}
+        <option value="{{ cat }}" {% if cat == selected_category %}selected{% endif %}>{{ cat }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="col-md-4 mb-2">
+    <input type="text" id="search-input" class="form-control search-input" placeholder="Search movies, shows...">
+  </div>
+</div>
+
+<!-- Top Rated Section -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2>Top Rated</h2>
+  {% if user.is_authenticated and user.is_staff %}
+    <a class="btn btn-sm btn-success" href="{% url 'cineapp:add_item' %}">Add Item</a>
+  {% endif %} 
+</div>
+
+<div class="row mb-4" id="top-rated-container">
+  {% for item in top %}
+    <div class="col-md-3 mb-3 item-card" 
+         data-title="{{ item.title|lower }}" 
+         data-genres="{{ item.genres|join:', '|lower }}"
+         data-category="{{ item.category|lower }}">
+      <div class="card h-100">
+        {% if item.poster %}
+          <img src="{{ item.poster.url }}" class="card-img-top card-image" alt="{{ item.title }}">
+        {% else %}
+          <div class="card-img-top placeholder-img"></div>
+        {% endif %}
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{ item.title }}</h5>
+          <p class="card-text small text-muted">{{ item.category }} • {{ item.release_year }}</p>
+          <p class="card-text small text-secondary">
+            Genres: {{ item.genres|join:", " }}
+          </p>
+          <p class="mb-1">⭐ {{ item.average_rating }} ({{ item.reviews_count }})</p>
+          <a href="{% url 'cineapp:item_detail' item.pk %}" class="btn btn-primary btn-sm mt-auto">View</a>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <p class="text-muted">No items yet.</p>
+  {% endfor %}
+</div>
+
+<!-- Recent Additions -->
+<h3>Recent Additions</h3>
+<div class="row" id="recent-container">
+  {% for item in recent %}
+    <div class="col-md-3 mb-3 item-card" 
+         data-title="{{ item.title|lower }}" 
+         data-genres="{{ item.genres|join:', '|lower }}"
+         data-category="{{ item.category|lower }}">
+      <div class="card h-100">
+        {% if item.poster %}
+          <img src="{{ item.poster.url }}" class="card-img-top card-image" alt="{{ item.title }}">
+        {% else %}
+          <div class="card-img-top placeholder-img"></div>
+        {% endif %}
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{ item.title }}</h5>
+          <p class="small text-muted">{{ item.category }} • {{ item.release_year }}</p>
+          <p class="card-text small text-secondary">
+            Genres: {{ item.genres|join:", " }}
+          </p>
+          <a href="{% url 'cineapp:item_detail' item.pk %}" class="btn btn-outline-primary btn-sm mt-auto">View</a>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<style>
+/* Card Images */
+.card-image {
+  object-fit: cover;
+  height: 250px;
+  width: 100%;
+}
+
+.placeholder-img {
+  height: 250px;
+  background-color: #2a2a2a;
+}
+
+/* Card Body */
+.card-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body .btn {
+  margin-top: auto;
+}
+
+/* Search Input */
+.search-input {
+  width: 100%;
+  border-radius: 50px;
+  padding: 12px 20px;
+  border: 2px solid #ffc107;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  border-color: #28a745;
+  box-shadow: 0 0 8px rgba(40, 167, 69, 0.5);
+  outline: none;
+}
+
+/* Dropdown Filters */
+.filter-select {
+  border-radius: 50px;
+  padding: 8px 15px;
+  border: 2px solid #ffc107;
+  transition: all 0.3s ease;
+}
+
+.filter-select:focus {
+  border-color: #28a745;
+  box-shadow: 0 0 8px rgba(40, 167, 69, 0.5);
+  outline: none;
+}
+
+/* Buttons */
+.btn-success {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, #20c997, #28a745);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+</style>
+
+<!-- Live Search & Filter Script -->
+<script>
+const searchInput = document.getElementById('search-input');
+const genreFilter = document.getElementById('genre-filter');
+const categoryFilter = document.getElementById('category-filter');
+const itemCards = document.querySelectorAll('.item-card');
+
+function filterItems() {
+  const query = searchInput.value.toLowerCase();
+  const selectedGenre = genreFilter.value.toLowerCase();
+  const selectedCategory = categoryFilter.value.toLowerCase();
+
+  itemCards.forEach(card => {
+    const title = card.dataset.title;
+    const genres = card.dataset.genres;
+    const category = card.dataset.category;
+
+    const matchesSearch = title.includes(query);
+    const matchesGenre = !selectedGenre || genres.includes(selectedGenre);
+    const matchesCategory = !selectedCategory || category.includes(selectedCategory);
+
+    card.style.display = (matchesSearch && matchesGenre && matchesCategory) ? '' : 'none';
+  });
+}
+
+// Event listeners
+searchInput.addEventListener('keyup', filterItems);
+genreFilter.addEventListener('change', filterItems);
+categoryFilter.addEventListener('change', filterItems);
+</script>
+
+{% endblock %} {% endcomment %}
+
+
+{% block content %}
+<!-- Filter Section -->
+<div class="row mb-4">
+  <div class="col-md-3">
+    <select id="genre-filter" class="form-select">
+      <option value="">All Genres</option>
+      {% for genre in genres %}
+        <option value="{{ genre }}" {% if genre == selected_genre %}selected{% endif %}>{{ genre }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="col-md-3">
+    <select id="category-filter" class="form-select">
+      <option value="">All Categories</option>
+      {% for cat in categories %}
+        <option value="{{ cat }}" {% if cat == selected_category %}selected{% endif %}>{{ cat }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="col-md-6">
+    <input type="text" id="search-input" class="form-control" placeholder="Search movies, shows...">
+  </div>
+</div>
+
+<!-- Top Rated Section -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2>Top Rated</h2>
+  {% if user.is_authenticated and user.is_staff %}
+    <a class="btn btn-sm btn-success" href="{% url 'cineapp:add_item' %}">Add Item</a>
+  {% endif %}
+</div>
+
+<div class="row mb-4" id="top-rated-container">
+  {% for item in top %}
+    <div class="col-md-3 mb-3 item-card" data-title="{{ item.title|lower }}">
+      <div class="card h-100 shadow-sm hover-shadow">
+        {% if item.poster %}
+          <img src="{{ item.poster.url }}" class="card-img-top card-image" alt="{{ item.title }}">
+        {% else %}
+          <div class="card-img-top placeholder-img"></div>
+        {% endif %}
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{ item.title }}</h5>
+          <p class="card-text small text-muted">{{ item.category }} • {{ item.release_year }}</p>
+
+          <!-- Genres Badges -->
+          {% if item.genres %}
+            <p>
+              {% for genre in item.genres %}
+                <span class="badge bg-secondary text-white">{{ genre }}</span>
+              {% endfor %}
+            </p>
+          {% endif %}
+
+          <!-- Rating -->
+          <p class="mb-1">⭐ {{ item.average_rating }} ({{ item.reviews_count }})</p>
+
+          <a href="{% url 'cineapp:item_detail' item.pk %}" class="btn btn-primary btn-sm mt-auto">View</a>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <p class="text-muted">No items yet.</p>
+  {% endfor %}
+</div>
+
+<!-- Recent Additions -->
+<h3>Recent Additions</h3>
+<div class="row" id="recent-container">
+  {% for item in recent %}
+    <div class="col-md-3 mb-3 item-card" data-title="{{ item.title|lower }}">
+      <div class="card h-100 shadow-sm hover-shadow">
+        {% if item.poster %}
+          <img src="{{ item.poster.url }}" class="card-img-top card-image" alt="{{ item.title }}">
+        {% else %}
+          <div class="card-img-top placeholder-img"></div>
+        {% endif %}
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{ item.title }}</h5>
+          <p class="small text-muted">{{ item.category }}</p>
+          {% if item.genres %}
+            <p>
+              {% for genre in item.genres %}
+                <span class="badge bg-warning text-dark">{{ genre }}</span>
+              {% endfor %}
+            </p>
+          {% endif %}
+          <a href="{% url 'cineapp:item_detail' item.pk %}" class="btn btn-outline-primary btn-sm mt-auto">View</a>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<style>
+
+
+.card-image {
+  object-fit: cover;
+  height: 250px;
+}
+
+.placeholder-img {
+  height: 250px;
+  background-color: #2a2a2a;
+}
+
+.card-body .btn {
+  margin-top: auto;
+}
+
+.hover-shadow:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  transition: 0.3s;
+}
+
+.badge {
+  margin-right: 3px;
+}
+
+#search-input, .form-select {
+  border-radius: 50px;
+  padding: 8px 15px;
+  border: 2px solid #ffc107;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: #fff;
+  font-weight: bold;
+}
+</style>
+
+<script>
+const searchInput = document.getElementById('search-input');
+const itemCards = document.querySelectorAll('.item-card');
+const genreFilter = document.getElementById('genre-filter');
+const categoryFilter = document.getElementById('category-filter');
+
+function filterCards() {
+  const query = searchInput.value.toLowerCase();
+  const genre = genreFilter.value.toLowerCase();
+  const category = categoryFilter.value.toLowerCase();
+
+  itemCards.forEach(card => {
+    const title = card.dataset.title;
+    const cardGenres = Array.from(card.querySelectorAll('.badge')).map(b => b.textContent.toLowerCase());
+    const cardCategory = card.querySelector('.card-text')?.textContent.toLowerCase() || '';
+
+    const matchesSearch = title.includes(query);
+    const matchesGenre = genre === '' || cardGenres.includes(genre);
+    const matchesCategory = category === '' || cardCategory.includes(category);
+
+    card.style.display = matchesSearch && matchesGenre && matchesCategory ? '' : 'none';
+  });
+}
+
+searchInput.addEventListener('keyup', filterCards);
+genreFilter.addEventListener('change', filterCards);
+categoryFilter.addEventListener('change', filterCards);
+</script>
+
+{% endblock %}

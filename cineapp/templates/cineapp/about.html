@@ -1,0 +1,122 @@
+{% extends 'cineapp/base.html' %}
+{% comment %} <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About | CineLit</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #0d0d0d;
+      color: #f1f1f1;
+      font-family: 'Poppins', sans-serif;
+    }
+    .navbar {
+      background-color: #1a1a1a;
+    }
+    .navbar-brand {
+      font-weight: bold;
+      color: #ffcc00 !important;
+      letter-spacing: 1px;
+    }
+    .nav-link {
+      color: #f1f1f1 !important;
+      transition: 0.3s;
+    }
+    .nav-link:hover {
+      color: #ffcc00 !important;
+    }
+    .about-section {
+      padding: 80px 20px;
+      text-align: center;
+    }
+    .about-section h1 {
+      font-size: 2.8rem;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #ffcc00;
+    }
+    .about-section p {
+      font-size: 1.1rem;
+      color: #dcdcdc;
+      max-width: 800px;
+      margin: auto;
+      line-height: 1.8;
+    }
+    footer {
+      background-color: #1a1a1a;
+      color: #aaa;
+      text-align: center;
+      padding: 15px 0;
+      margin-top: 80px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="/">CineLit</a>
+      <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/movies/">Movies</a></li>
+          <li class="nav-item"><a class="nav-link" href="/series/">Series</a></li>
+          <li class="nav-item"><a class="nav-link" href="/books/">Books</a></li>
+          <li class="nav-item"><a class="nav-link active text-warning" href="/about/">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="/contact/">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- About Section -->
+  <section class="about-section">
+    <div class="container">
+      <h1>About CineLit</h1>
+      <p>
+        Welcome to <strong>CineLit</strong> — your all-in-one platform to explore the world of 
+        <span style="color:#ffcc00;">movies, series, and books</span>.  
+        We bring together passionate storytellers and entertainment lovers, offering honest reviews, 
+        recommendations, and a community-driven platform for sharing insights and opinions.  
+      </p>
+      <p>
+        Whether you're a film buff, binge-watcher, or bookworm, CineLit helps you discover the next story that moves you.
+      </p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 CineLit. All rights reserved.</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> {% endcomment %}
+
+
+
+
+{% block content %}
+<!-- About Section -->
+<section class="about-section py-5">
+  <div class="container text-center">
+    <h1 class="mb-4" style="color:red;">About CineLit+</h1>
+    <p class="mb-3" style="color:black; max-width:800px; margin:auto; line-height:1.8;">
+      Welcome to <strong>CineLit+</strong> — your all-in-one platform to explore the world of 
+      <span style="color:red;">movies, series, and books</span>.  
+      We bring together passionate storytellers and entertainment lovers, offering honest reviews, 
+      recommendations, and a community-driven platform for sharing insights and opinions.
+    </p>
+    <p style="color:#black; max-width:800px; margin:auto; line-height:1.8;">
+      Whether you're a film buff, binge-watcher, or bookworm, CineLit+ helps you discover the next story that moves you.
+    </p>
+  </div>
+</section>
+{% endblock %}
