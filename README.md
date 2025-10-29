@@ -152,16 +152,8 @@ HTML, CSS, Bootstrap (for templates)
 This project is licensed under the MIT License. See the LICENSE file for details.
 
 
----
 
-### **How to use on GitHub directly**
-1. Copy this text into the GitHub editor for `README.md`.  
-2. Upload your screenshots via **Add file → Upload files**.  
-3. Replace the placeholder URLs in the `Screenshots` section with your actual uploaded image URLs.  
-4. Commit changes.  
 
----
 
-If you want, I can **also prepare a version with smaller Markdown image links ready for GitHub’s `/blob/main/docs/screenshots/...` paths**, so you can just drag and drop screenshots and paste links — no need for manual URL replacement.  
 
 
